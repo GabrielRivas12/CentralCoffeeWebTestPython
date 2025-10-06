@@ -1,0 +1,143 @@
+{% extends "base/BaseAdmin.html" %}
+
+{% block Titulo %}Mapa Interactivo - Google Maps{% endblock Titulo %}
+
+{% block body %}
+<style>
+  /* Estilos generales */
+  body, html { height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+  .main-content, .container { height: 100%; display: flex; flex-direction: column; padding: 0 !important; }
+
+  .map-header {
+    background: linear-gradient(135deg, #2c3e50, #4a6491);
+    color: white;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+
+  .map-header h1 { margin:0; font-size:1.6rem; font-weight:600; display:flex; align-items:center; gap:10px; }
+  .map-controls { display:flex; gap:12px; }
+  .map-controls button { background-color:#3498db; color:white; border:none; padding:10px 18px; border-radius:6px; cursor:pointer; font-size:0.95rem; display:flex; align-items:center; gap:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); transition:all 0.3s; }
+  .map-controls button:hover { background-color:#2980b9; transform: translateY(-2px); box-shadow:0 4px 8px rgba(0,0,0,0.15); }
+  #map { flex-grow:1; width:100%; z-index:1; }
+  .info-panel { position:absolute; top:80px; right:20px; width:320px; background:white; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.2); z-index:1000; padding:20px; display:none; transition: all 0.3s ease; }
+  .info-panel.active { display:block; animation: slideIn 0.3s ease; }
+  @keyframes slideIn { from { opacity:0; transform:translateX(20px);} to{opacity:1; transform:translateX(0);} }
+  .info-panel h3 { margin-top:0; color:#2c3e50; border-bottom:2px solid #f1f1f1; padding-bottom:12px; display:flex; align-items:center; gap:10px; }
+  .close-panel { position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.4rem; cursor:pointer; color:#7f8c8d; transition:color 0.3s; }
+  .close-panel:hover { color:#e74c3c; }
+
+  .search-container { position:absolute; top:80px; left:20px; z-index:1000; width:300px; }
+  .search-box { width:100%; padding:12px 15px; border:none; border-radius:25px; box-shadow:0 3px 10px rgba(0,0,0,0.2); font-size:1rem; outline:none; transition:all 0.3s; }
+  .search-box:focus { box-shadow:0 5px 15px rgba(0,0,0,0.25); transform:translateY(-2px); }
+
+  .custom-info-window { padding:15px; max-width:250px; }
+  .custom-info-window h3 { margin-top:0; color:#2c3e50; border-bottom:1px solid #eee; padding-bottom:8px; }
+  .custom-info-window p { margin:8px 0; color:#555; }
+  .custom-info-window button { background-color:#3498db; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; width:100%; margin-top:10px; transition:background-color 0.3s; }
+  .custom-info-window button:hover { background-color:#2980b9; }
+</style>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="container">
+  <div class="map-header">
+    <h1><i class="fas fa-map-marked-alt"></i> Mapa Interactivo - Nicaragua</h1>
+    <div class="map-controls">
+      <button id="resetView"><i class="fas fa-home"></i> Vista Inicial</button>
+      <button id="togglePanel"><i class="fas fa-info-circle"></i> Información</button>
+      <button id="addMarker"><i class="fas fa-map-marker-alt"></i> Agregar Marcador</button>
+    </div>
+  </div>
+
+  
+
+  <div id="map"></div>
+
+  <div class="info-panel" id="infoPanel">
+    <button class="close-panel">&times;</button>
+    <h3><i class="fas fa-info-circle"></i> Información de Ubicación</h3>
+    <div id="panelContent">
+      <p>Seleccione un marcador en el mapa para ver información detallada.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  let map, markers = [], infoWindow;
+
+  const locations = [
+    { name:"Managua", coords:{lat:12.114993,lng:-86.236174}, type:"critical", description:"Capital de Nicaragua. Centro político y económico.", population:"1.5 millones" },
+    { name:"León", coords:{lat:12.434277,lng:-86.877045}, type:"important", description:"Ciudad universitaria y cultural.", population:"210,000" },
+    { name:"Granada", coords:{lat:11.934664,lng:-85.958879}, type:"important", description:"Ciudad colonial a orillas del Lago Cocibolca.", population:"125,000" },
+    { name:"Estelí", coords:{lat:13.092911,lng:-86.353035}, type:"normal", description:"Centro agrícola y comercial.", population:"130,000" },
+    { name:"San Juan del Sur", coords:{lat:11.252921,lng:-85.870987}, type:"normal", description:"Destino turístico costero.", population:"18,000" },
+    { name:"Matagalpa", coords:{lat:12.920028,lng:-85.917377}, type:"normal", description:"Centro de producción de café.", population:"110,000" }
+  ];
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center:{lat:12.865416,lng:-85.207229}, zoom:7, mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    infoWindow = new google.maps.InfoWindow();
+    locations.forEach(location => addMarker(location));
+
+    const searchBox = new google.maps.places.SearchBox(document.getElementById('searchBox'));
+    map.addListener('bounds_changed', ()=>searchBox.setBounds(map.getBounds()));
+    searchBox.addListener('places_changed', ()=>{
+      const places = searchBox.getPlaces();
+      if(!places||places.length===0) return;
+      const bounds = new google.maps.LatLngBounds();
+      places.forEach(place=>{
+        if(!place.geometry) return;
+        if(place.geometry.viewport) bounds.union(place.geometry.viewport);
+        else bounds.extend(place.geometry.location);
+      });
+      map.fitBounds(bounds);
+    });
+  }
+
+  function addMarker(location) {
+    let iconUrl = location.type==="critical"?'http://maps.google.com/mapfiles/ms/icons/red-dot.png':location.type==="important"?'http://maps.google.com/mapfiles/ms/icons/orange-dot.png':'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+    const marker = new google.maps.Marker({position:location.coords,map:map,title:location.name,icon:{url:iconUrl,scaledSize:new google.maps.Size(32,32)}});
+    const contentString = `<div class="custom-info-window"><h3>${location.name}</h3><p><strong>Tipo:</strong>${location.type==="critical"?"Crítica":location.type==="important"?"Importante":"Normal"}</p><p><strong>Población:</strong>${location.population}</p><p>${location.description}</p><button onclick="showLocationDetails(${JSON.stringify(location).replace(/"/g,'&quot;')})">Ver detalles completos</button></div>`;
+    marker.addListener('click',()=>{infoWindow.setContent(contentString); infoWindow.open(map,marker); showLocationDetails(location);});
+    markers.push(marker);
+  }
+
+  function showLocationDetails(location){
+    const panel=document.getElementById('infoPanel');
+    const content=document.getElementById('panelContent');
+    content.innerHTML=`<div class="location-details"><h4>${location.name}</h4><p><strong>Tipo:</strong>${location.type==="critical"?"Crítica":location.type==="important"?"Importante":"Normal"}</p><p><strong>Coordenadas:</strong>${location.coords.lat.toFixed(6)},${location.coords.lng.toFixed(6)}</p><p><strong>Población:</strong>${location.population}</p><p>${location.description}</p></div>`;
+    panel.classList.add('active');
+  }
+
+  document.getElementById('resetView').addEventListener('click',()=>{map.setCenter({lat:12.865416,lng:-85.207229}); map.setZoom(7);});
+  document.getElementById('togglePanel').addEventListener('click',()=>document.getElementById('infoPanel').classList.toggle('active'));
+  document.querySelector('.close-panel').addEventListener('click',()=>document.getElementById('infoPanel').classList.remove('active'));
+  document.getElementById('addMarker').addEventListener('click',()=>{
+    const center=map.getCenter();
+    const newLocation={name:"Nueva Ubicación",coords:{lat:center.lat(),lng:center.lng()},type:"normal",description:"Ubicación agregada por el usuario.",population:"Desconocida"};
+    addMarker(newLocation); showLocationDetails(newLocation); infoWindow.close();
+  });
+  window.gm_authFailure=()=>alert('Error al cargar Google Maps. Verifique que la API key sea válida.');
+</script>
+
+<!-- Google Maps API con key dinámica desde Flask -->
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap">
+</script>
+
+<noscript>
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
+    <h2>Se requiere JavaScript para ver el mapa</h2>
+    <p>Por favor, active JavaScript en su navegador para utilizar esta funcionalidad.</p>
+  </div>
+</noscript>
+
+{% endblock body %}

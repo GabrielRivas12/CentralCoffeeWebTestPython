@@ -1,0 +1,220 @@
+{% extends "base/BaseAdmin.html" %}
+
+{% block body %}
+<div class="container login-container my-5">
+    <div class="row w-100">
+        <div class="col-md-8 mx-auto">
+            <div class="card login-card shadow">
+                <div class="row g-0">
+
+                    <!-- Panel izquierdo con logo y mensaje -->
+                    <div
+                        class="col-md-6 login-left d-flex flex-column justify-content-center align-items-center text-white p-4">
+                        <div class="logo-container mb-3">
+                            <img src="{{ url_for('static', filename='img/logo.png') }}
+" alt="Logo" class="img-fluid" style="max-width: 150px;">
+                        </div>
+                        <h1 class="welcome-text">¡Bienvenido!</h1>
+                        <p class="tagline">Donde comienza tu historia con el café</p>
+                        <div class="mt-4 text-center">
+
+                        </div>
+                    </div>
+
+                    <!-- Panel derecho: Formulario de inicio de sesión -->
+                    <div class="col-md-6 login-right p-4">
+                        <div class="brand text-center mb-4">{{ titulo_formulario }}</div>
+
+                        {% if opcion_google %}
+                        <div class="mb-3">
+                            <button class="btn btn-google w-100 mb-3">
+                                <i class="fab fa-google me-2"></i> {{ boton_google_texto }}
+                            </button>
+                        </div>
+                        {% endif %}
+
+                        <form action="{{ accion_form }}" method="POST">
+                            <div class="brand mb-4"
+                                style="font-size:32px; font-weight:bold; text-align:left; color: #000;">
+                                Login
+                            </div>
+
+
+
+                            <!-- Botón Google con imagen -->
+                            <button class="btn btn-google w-100 mb-2 d-flex align-items-center justify-content-center">
+                                <img src="
+                                
+                                {{ url_for('static', filename='img/google-logo.png') }}
+                                
+                                " alt="Google" style="width:20px; height:20px; margin-right:8px;">
+                                Registrarse con Google
+                            </button>
+
+
+                            <div class="mb-3">
+                                <label for="correo" class="form-label">Correo</label>
+                                <input type="email" class="form-control" id="correo" name="correo"
+                                    placeholder="usuario@correo.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="clave" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="clave" name="password"
+                                    placeholder="********" required>
+                            </div>
+
+                            <div class="mb-3 text-end">
+                                <div class="mb-3 d-flex justify-content-end">
+                                    <button type="button" class="btn btn-olvidado">¿Olvidaste tu contraseña?</button>
+
+                                </div>
+
+                            </div>
+
+
+                            <a href="{{ url_for('registro') }}" class="btn btn-link-registro w-100 mb-3 text-center">
+                                ¿No tienes cuenta? <span class="resaltar">Registrate</span>
+                            </a>
+
+
+
+
+                            <button type="submit" class="btn btn-login w-100 mb-3">Crear cuenta</button>
+                        </form>
+
+                        {% if olvidaste_contraseña %}
+                        <p class="text-olvidado mt-2">¿Olvidaste tu contraseña?</p>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .login-card {
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    /* Panel izquierdo */
+    .login-left {
+        text-align: center;
+        background-color: #F1A89B;
+    }
+
+    .logo-container img {
+        display: block;
+        margin: 0 auto;
+    }
+
+    .login-left .welcome-text {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .login-left .tagline {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .login-left a.btn-switch {
+        color: #ED6D4A;
+        border-color: #ED6D4A;
+    }
+
+    .login-left a.btn-switch:hover {
+        background-color: #ED6D4A;
+        color: #fff;
+    }
+
+    /* Panel derecho */
+    .login-right .brand {
+        font-size: 28px;
+        font-weight: bold;
+        color: #ED6D4A;
+    }
+
+    /* Botones */
+    .btn-login {
+        background-color: #ED6D4A;
+        color: #fff;
+        border: none;
+        font-weight: bold;
+    }
+
+    .btn-login:hover {
+        opacity: 0.9;
+    }
+
+    /* Botón Google */
+    .btn-google {
+        background: #fff;
+        color: #000;
+        border: 1px solid #ccc;
+    }
+
+    .btn-olvidado {
+        background: none;
+        border: none;
+        color: #ED6D4A;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .btn-olvidado:hover {
+        text-decoration: underline;
+    }
+
+    .btn-link-registro {
+        background: none;
+        border: none;
+        color: #000;
+        /* color del resto del texto */
+        font-weight: normal;
+        padding: 0;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .btn-link-registro {
+        background: none;
+        border: none;
+        color: #000;
+        /* color del resto del texto */
+        font-weight: normal;
+        padding: 0;
+        text-align: center;
+        /* centramos el contenido */
+        cursor: pointer;
+    }
+
+    .btn-link-registro .resaltar {
+        color: #ED6D4A;
+        font-weight: bold;
+    }
+
+    .btn-link-registro:hover .resaltar {
+        text-decoration: underline;
+    }
+
+
+
+
+    /* Divider */
+    .divider-text {
+        color: #888;
+        font-weight: bold;
+    }
+
+    /* Texto “Olvidaste tu contraseña” */
+    .text-olvidado {
+        color: #ED6D4A;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
