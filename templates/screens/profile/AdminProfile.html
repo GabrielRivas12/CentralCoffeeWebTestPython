@@ -1,0 +1,79 @@
+{% extends "base/BaseAdmin.html" %} {% block Titulo %} Perfil - Administrador {%
+endblock Titulo %} {% block body %}
+
+<div class="container">
+  <div id="ProfileInfo" class="container flex-column">
+    <div id="Images" class="flex-column mb-3 position-relative">
+      <img src="{{url_for('static', filename='img/debugImages/ProfileCover.jpg')}}" id="ProfileCover"
+        class="img-fluid size-cover rounded" alt="Portada de perfil"
+        style="width: 100%; height: 150px; object-fit: cover" />
+      <img src="{{url_for('static', filename='img/debugImages/ImageProfile.jpg')}}" class="rounded-circle"
+        alt="Imagen de perfil" style="
+          width: 150px;
+          height: 150px;
+          object-fit: cover;
+          position: relative;
+          top: -75px;
+          left: 20px;
+          border: 4px solid white;
+        " />
+    </div>
+
+    <div id="ProfileContent" class="p-4">
+      <!-- Sección "Sobre mí" -->
+      <div class="text-center">
+        <h2 class="card-title">Nombre de Administrador</h2>
+        <p class="card-text text-muted">
+          Una breve biografía o descripción sobre el administrador. Este texto
+          puede ser dinámico.
+        </p>
+      </div>
+
+      <hr class="my-4" />
+
+      <!-- Sección de Tarjetas -->
+      <h3 class="mb-3 text-center">Información Adicional</h3>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <!-- Tarjeta 1 (Placeholder) -->
+        <div class="col">
+          <div class="card h-100">
+            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Imagen de tarjeta" />
+            <div class="card-body">
+              <p class="card-text">
+                Descripción de la tarjeta. Aquí puedes poner información
+                relevante que luego cargarás con JS.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2 (Placeholder) -->
+        <div class="col">
+          <div class="card h-100">
+            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Imagen de tarjeta" />
+            <div class="card-body">
+              <p class="card-text">
+                Más detalles sobre los logros o datos importantes del negocio.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3 (Placeholder) -->
+        <div class="col">
+          <div class="card h-100">
+            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Imagen de tarjeta" />
+            <div class="card-body">
+              <p class="card-text">
+                Tercera tarjeta con su propia descripción. Flexible para
+                distintos tipos de contenido.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}
