@@ -1,243 +1,56 @@
-{% extends "base/BaseAdmin.html" %}
+{% extends "base/BaseAdmin.html" %} {% block body %}
+    <div class="chat-container">
+        <div class="header">
+            <div class="header-title">Asistente IA</div>
+        </div>
 
-{% block Titulo %}
-Asistente IA
-{% endblock Titulo %}
+        <div class="chat-content-wrapper" id="chatContentWrapper">
+            <div class="chat-content" id="chatContent">
+                <!-- Los mensajes se agregarán aquí dinámicamente -->
+            </div>
+            
+            <!-- Input centrado cuando no hay mensajes -->
+            <div class="centered-input-container" id="centeredInputContainer">
+                <div class="centered-input-wrapper">
+                  
+                    <div class="input-group centered-input-group">
+                        <textarea 
+                            class="form-control centered-input-field" 
+                            id="centeredMessageInput" 
+                            placeholder="Pregúntame sobre café de Nicaragua..."
+                            rows="1"
+                        ></textarea>
+                        
+                        <div class="input-group-append">
+                            <button class="btn btn-primary rounded-circle send-btn-centered" id="sendButtonCentered" disabled>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-{% block body %}
-<style>
-    :root {
-        --primary-color: #8B4513;
-        --secondary-color: #A0522D;
-        --accent-color: #ED6D4A;
-        --bg-color: #f3f2f0;
-        --bot-bg: #fff;
-    }
-
-    /* ❌ Scroll global desactivado para la página */
-    body,
-    html {
-        overflow: hidden;
-        height: 100%;
-        margin: 0;
-    }
-
-    .chat-container {
-        max-width: 1500px;
-        margin: 5px auto 0 auto;
-        /* casi pegado arriba */
-        display: flex;
-        flex-direction: column;
-        height: 95vh;
-        border-radius: 20px;
-        overflow: hidden;
-        background-color: var(--bg-color);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        border: 1px solid #ccc;
-    }
-
-
-
-    /* Lista de mensajes con scroll interno */
-    .messages {
-        flex-grow: 1;
-        padding: 35px 50px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 25px;
-        scroll-behavior: smooth;
-    }
-
-    /* Burbujas de usuario */
-    .user-message {
-        align-self: flex-end;
-        background-color: var(--accent-color);
-        color: #fff;
-        padding: 20px 28px;
-        border-radius: 35px 5px 35px 35px;
-        max-width: 75%;
-        font-size: 18px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-        word-wrap: break-word;
-        animation: fadeIn 0.2s ease-in;
-    }
-
-    /* Burbujas del bot */
-    .bot-message {
-        align-self: flex-start;
-        background-color: var(--bot-bg);
-        color: #000;
-        padding: 20px 28px;
-        border-radius: 5px 35px 35px 35px;
-        max-width: 75%;
-        font-size: 18px;
-        border: 1px solid #ddd;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
-        word-wrap: break-word;
-        position: relative;
-        animation: fadeIn 0.2s ease-in;
-    }
-
-    /* Input + botón */
-    .input-container {
-        display: flex;
-        padding: 25px 35px;
-        border-top: 1px solid #ccc;
-        background-color: #fff;
-    }
-
-    .input-container input {
-        flex-grow: 1;
-        padding: 18px 25px;
-        border-radius: 35px;
-        border: 1px solid #ccc;
-        outline: none;
-        font-size: 18px;
-    }
-
-    .input-container button {
-        margin-left: 20px;
-        padding: 18px 35px;
-        border: none;
-        border-radius: 35px;
-        background-color: var(--accent-color);
-        color: #fff;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s;
-    }
-
-    .input-container button:hover {
-        background-color: var(--secondary-color);
-    }
-
-    /* Scroll minimalista solo dentro del chat */
-    .messages::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    .messages::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.25);
-        border-radius: 5px;
-    }
-
-    /* Animación burbujas */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(5px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Barra de progreso elegante */
-    .bot-loading {
-        position: relative;
-        width: 120px;
-        height: 8px;
-        border-radius: 12px;
-        overflow: hidden;
-        margin-top: 8px;
-        background: rgba(0, 0, 0, 0.1);
-    }
-
-    .bot-loading span {
-        display: block;
-        height: 100%;
-        width: 0;
-        background: var(--accent-color);
-        animation: load 1s linear infinite;
-    }
-
-    @keyframes load {
-        0% {
-            width: 0;
-        }
-
-        50% {
-            width: 100%;
-        }
-
-        100% {
-            width: 0;
-        }
-    }
-</style>
-
-<div class="chat-container">
-    <div class="messages" id="messages">
-        <div class="bot-message">
-            Hola! Soy Coffee. ¿En qué puedo ayudarte?
+        <!-- Input normal en la parte inferior -->
+        <div class="input-container" id="normalInputContainer" style="display: none;">
+            <textarea 
+                class="input-field" 
+                id="messageInput" 
+                placeholder="Pregúntame sobre café de Nicaragua..."
+                rows="1"
+            ></textarea>
+            
+            <button class="clear-button" id="clearButton" title="Limpiar chat">
+                🗑️
+            </button>
+            
+            <button class="send-button" id="sendButton" disabled>
+                ➤
+            </button>
         </div>
     </div>
-    <div class="input-container">
-        <input type="text" id="userInput" placeholder="Escribe tu pregunta..." />
-        <button onclick="sendMessage()">Enviar</button>
-    </div>
-</div>
 
-<script>
-    const messagesDiv = document.getElementById('messages');
-
-    async function sendMessage() {
-        const input = document.getElementById('userInput');
-        const text = input.value.trim();
-        if (!text) return;
-
-        // Mensaje usuario
-        const userMsg = document.createElement('div');
-        userMsg.classList.add('user-message');
-        userMsg.textContent = text;
-        messagesDiv.appendChild(userMsg);
-
-        input.value = '';
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-        // Mensaje bot con barra de progreso
-        const botMsg = document.createElement('div');
-        botMsg.classList.add('bot-message');
-        botMsg.innerHTML = 'Escribiendo... <div class="bot-loading"><span></span></div>';
-        messagesDiv.appendChild(botMsg);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-        try {
-            const response = await fetch("/ask_gemini", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: text })
-            });
-
-            const data = await response.json();
-            let answer = data.candidates?.[0]?.content?.parts?.[0]?.text || "Lo siento, no entendí la respuesta.";
-
-            // Formateo profesional de mensajes largos
-            answer = answer
-                .replace(/\n\s*\n/g, '</p><p>')
-                .replace(/^\s*-\s*(.*)$/gm, '<li>$1</li>');
-            if (answer.includes('<li>')) {
-                answer = '<ul>' + answer + '</ul>';
-            } else {
-                answer = '<p>' + answer + '</p>';
-            }
-
-            botMsg.innerHTML = answer;
-
-        } catch (error) {
-            botMsg.textContent = "Error al conectar con Gemini 😢";
-            console.error(error);
-        }
-
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    // Enter para enviar mensaje
-    document.getElementById('userInput').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') sendMessage();
-    });
-</script>
-{% endblock body %}
+    <!-- Enlaces a archivos externos -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbox.css') }}">
+    <script src="{{ url_for('static', filename='js/chatbox.js') }}"></script>
+{% endblock %}

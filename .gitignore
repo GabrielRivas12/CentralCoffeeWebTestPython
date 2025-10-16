@@ -1,4 +1,6 @@
-.venv/
+venv/
 .env
 .vscode/
+pycache/
+__pycache__/
 centralcoffee-2910d-firebase-adminsdk-fbsvc-2515da27db.json
