@@ -5,23 +5,16 @@
       <div class="card login-card shadow">
         <div class="row g-0">
           <!-- Panel izquierdo con logo -->
-          <div
-            class="col-md-6 login-left d-flex flex-column justify-content-center align-items-center text-white p-4"
-            style="background-color: #f1a89b"
-          >
+          <div class="col-md-6 login-left d-flex flex-column justify-content-center align-items-center text-white p-4"
+            style="background-color: #f1a89b">
             <!-- Logo -->
             <div class="logo-container mb-3">
-              <img
-                src="
+              <img src="
                             
                             {{ url_for('static', filename='img/logo.png') }}
                             
                             
-                            "
-                alt="Cerne Logo"
-                class="img-fluid"
-                style="max-width: 150px"
-              />
+                            " alt="Cerne Logo" class="img-fluid" style="max-width: 150px" />
             </div>
 
             <!-- Texto de bienvenida -->
@@ -31,62 +24,43 @@
 
           <!-- Panel derecho: Formulario de registro -->
           <div class="col-md-6 login-right p-4">
-            <div
-              class="brand text-left mb-4"
-              style="color: #000; font-size: 32px; font-weight: bold"
-            >
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            <div class="brand text-left mb-4" style="color: #000; font-size: 32px; font-weight: bold">
               Crea tu cuenta
             </div>
 
             <form action="{{ url_for('login.registro') }}" method="POST">
               <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre de Usuario</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="nombre"
-                  name="nombre"
-                  placeholder="Tu nombre completo"
-                  required
-                />
+                <label for="name" class="form-label">Nombre de Usuario</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Tu nombre completo"
+                  required />
               </div>
 
               <div class="mb-3">
-                <label for="correo" class="form-label">Correo</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="correo"
-                  name="correo"
-                  placeholder="usuario@correo.com"
-                  required
-                />
+                <label for="email" class="form-label">Correo</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="usuario@correo.com"
+                  required />
               </div>
 
               <div class="mb-3">
-                <label for="clave" class="form-label">Contraseña</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="clave"
-                  name="password"
-                  placeholder="********"
-                  required
-                />
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="********"
+                  required />
               </div>
 
               <div class="mb-3">
-                <label for="confirmar" class="form-label"
-                  >Confirmar contraseña</label
-                >
-                <input
-                  type="password"
-                  class="form-control"
-                  id="confirmar"
-                  name="confirmar"
-                  placeholder="********"
-                  required
-                />
+                <label for="confirmar" class="form-label">Confirmar contraseña</label>
+                <input type="password" class="form-control" id="confirmar" name="confirmar" placeholder="********"
+                  required />
               </div>
 
               <div class="mb-3">
@@ -98,11 +72,7 @@
                 </select>
               </div>
 
-              <button
-                type="submit"
-                class="btn btn-login mb-3"
-                style="width: auto; padding: 0.5rem 1rem; float: right"
-              >
+              <button type="submit" class="btn btn-login mb-3" style="width: auto; padding: 0.5rem 1rem; float: right">
                 Crear
               </button>
             </form>

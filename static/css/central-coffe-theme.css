@@ -1,26 +1,26 @@
 /* Estilos para superponer la imagen de perfil sobre la de portada */
- #Images {
-     position: relative;
-     margin-bottom: 80px;
-     /* Ajusta este valor según el tamaño de tu imagen de perfil */
- }
+#Images {
+  position: relative;
+  margin-bottom: 80px;
+  /* Ajusta este valor según el tamaño de tu imagen de perfil */
+}
 
- .ProfileImage {
-     width: 150px;
-     height: 150px;
-     object-fit: cover;
-     border: 4px solid white;
-     position: relative;
-     top: -75px;
-     left: 20px;
- }
+.ProfileImage {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 4px solid white;
+  position: relative;
+  top: -75px;
+  left: 20px;
+}
 
- #ProfileCover {
-     width: 100%;
-     height: 300px;
-     /* Altura de la imagen de portada */
-     object-fit: cover;
- }
+#ProfileCover {
+  width: 100%;
+  height: 300px;
+  /* Altura de la imagen de portada */
+  object-fit: cover;
+}
 
 /* BaseAdmin Styles */
 body {
@@ -133,8 +133,8 @@ body {
 }
 
 .logout-button:hover {
-    background-color: #3c5a78;
-    color: #fff;
+  background-color: #3c5a78;
+  color: #fff;
 }
 
 /* ===================================================== */
@@ -144,24 +144,48 @@ body {
 /* --- Sidebar y Offcanvas en Tema Claro --- */
 body.light-theme .sidebar-desktop,
 body.light-theme .offcanvas-start {
-    background-color: #f8f9fa; /* Color de fondo claro */
-    color: #212529;           /* Texto oscuro */
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
+  background-color: #f1a89b;
+  /* Color de fondo claro */
+  color: #212529;
+  /* Texto oscuro */
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+  /* Sombra más sutil */
 }
 
 /* --- Navbar Móvil en Tema Claro --- */
 body.light-theme .navbar.bg-dark {
-    background-color: #f8f9fa !important; /* Forzamos el fondo claro sobre .bg-dark */
+  background-color: #f1a89b !important;
+  /* Forzamos el fondo claro sobre .bg-dark */
+}
+
+body.light-theme .map-header {
+  background: #f1a89b !important;
+  color: #212529 !important;
+}
+
+body.light-theme .map-header .map-controls button {
+  background: #667A8A !important;
+  color: #e9ecef !important;
+}
+
+body.light-theme .map-header h1,
+body.light-theme .map-header h1 i {
+  color: #212529 !important;
+}
+
+body.light-theme .map-header .map-controls button i {
+  color: white !important;
 }
 
 /* Logo en la navbar móvil */
 body.light-theme .navbar .logo.text-white {
-    color: #212529 !important; /* Forzamos el texto oscuro sobre .text-white */
+  color: #212529 !important;
+  /* Forzamos el texto oscuro sobre .text-white */
 }
 
 /* Icono del menú hamburguesa (se invierte para que sea visible en fondo claro) */
 body.light-theme .navbar-dark .navbar-toggler-icon {
-    filter: invert(1);
+  filter: invert(1);
 }
 
 
@@ -174,23 +198,25 @@ body.light-theme .offcanvas .menu a,
 body.light-theme .sidebar-desktop .menu a i,
 body.light-theme .offcanvas .menu a i,
 body.light-theme .offcanvas-title {
-    color: #212529; /* Todo el texto e íconos a oscuro */
+  color: #212529;
+  /* Todo el texto e íconos a oscuro */
 }
 
 /* Hover de los enlaces del menú */
 body.light-theme .sidebar-desktop .menu a:hover,
 body.light-theme .offcanvas .menu a:hover {
-    background-color: #e9ecef; /* Un gris claro para el hover */
+  background-color: #e9ecef;
+  /* Un gris claro para el hover */
 }
 
 /* Botón de Logout */
 body.light-theme .logout-button {
-    background: #e9ecef;
-    color: #212529;
+  background: #667A8A;
+  color: #e9ecef;
 }
 
 body.light-theme .logout-button:hover {
-    background-color: #dee2e6;
+  background-color: #dee2e6;
 }
 
 /* === Mapa Interactivo === */
@@ -202,4 +228,73 @@ body.light-theme .logout-button:hover {
 
 #map {
   flex-grow: 1;
+}
+
+/* Custom button styles to invert colors */
+.btn-success,
+.btn-primary,
+.btn-danger,
+.btn-warning {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.btn-success .fas {
+  color: #28a745;
+}
+
+.btn-primary .fas {
+  color: #007bff;
+}
+
+.btn-danger .fas {
+  color: #dc3545;
+}
+
+.btn-warning .fas {
+  color: #fd7e14;
+}
+
+.btn-create-offer {
+  background-color: #007bff;
+  border-color: #007bff !important;
+  color: white !important;
+}
+
+.btn-more-info {
+  background-color: #28a745;
+  border-color: #28a745 !important;
+  color: white !important;
+}
+
+.btn-more-info:hover {
+  background-color: #0056b3;
+  border-color: #0056b3 !important;
+  color: white !important;
+}
+
+.btn-cancelar {
+  background-color: #dc3545;
+  border-color: #dc3545 !important;
+  color: white !important;
+}
+
+.btn-cancelar:hover {
+  background-color: #a71d2a;
+  border-color: #a71d2a !important;
+  color: white !important;
+}
+
+.btn-save {
+  background-color: #28a745;
+  border-color: #28a745 !important;
+  color: white !important;
+
+}
+
+.btn-save:hover {
+  background-color: #1e7e34;
+  border-color: #1e7e34 !important;
+  color: white !important;
 }
