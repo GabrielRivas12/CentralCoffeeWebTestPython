@@ -1,3 +1,4 @@
+from lib2to3.fixes.fix_filter import FixFilter
 from .repository.IOffersRepository import IOffersRepository
 from ..config.FirebaseConfig import db
 
@@ -46,7 +47,22 @@ class OffersRepositoryImpl(IOffersRepository):
             return []
 
     def obtener_uno(self, id):
-        return super().obtener_uno(id)
+        try:
+            productos = []
+            doc_ref = db.collection("oferta")
+            query = (
+                doc_ref.where("userId", "==", id).stream()
+                )
+
+            for doc in query:
+                producto = doc.to_dict()
+                producto['id'] = doc.id
+                productos.append(producto)
+
+            return productos
+        except Exception as e:
+            print("Error al obtener la oferta:", e)
+            return None
     
     def actualizar(self, id, data):
         

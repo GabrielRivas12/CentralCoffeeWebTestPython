@@ -5,17 +5,17 @@
   /* Ajusta este valor según el tamaño de tu imagen de perfil */
 }
 
-.ProfileImage {
+.profileImage {
   width: 150px;
   height: 150px;
   object-fit: cover;
   border: 4px solid white;
-  position: relative;
-  top: -75px;
+  position: absolute;
+  top: 225px !important;
   left: 20px;
 }
 
-#ProfileCover {
+.profileCover {
   width: 100%;
   height: 300px;
   /* Altura de la imagen de portada */
@@ -262,6 +262,18 @@ body.light-theme .logout-button:hover {
   color: white !important;
 }
 
+.btn-edit {
+  background-color: #ffc107;
+  border-color: #ffc107 !important;
+  color: white !important;
+}
+
+.btn-edit:hover {
+  background-color: #e0a800;
+  border-color: #e0a800 !important;
+  color: white !important;
+}
+
 .btn-more-info {
   background-color: #28a745;
   border-color: #28a745 !important;
@@ -297,4 +309,278 @@ body.light-theme .logout-button:hover {
   background-color: #1e7e34;
   border-color: #1e7e34 !important;
   color: white !important;
+}
+
+.card-offer-header {
+  background-color: #8b4513;
+  color: white;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s;
+  overflow: hidden;
+}
+
+/* ===== ESTILOS RESPONSIVE PARA PERFIL ===== */
+
+/* Contenedor de imágenes */
+#Images {
+  position: relative;
+  margin-bottom: 0;
+}
+
+/* Imagen de portada */
+.profile-cover-img {
+  height: 300px;
+  object-fit: cover;
+}
+
+/* Imagen de perfil */
+.profile-img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 5px solid white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  bottom: -75px;
+  left: 50px;
+  z-index: 10;
+}
+
+/* Header de ofertas en tarjetas */
+.card-offer-header {
+  background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+  color: white;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Tarjetas de productos */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.product-image {
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .product-image {
+  transform: scale(1.05);
+}
+
+/* Botones personalizados */
+.btn-edit {
+  background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+  color: white;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-save:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+  color: white;
+}
+
+/* Grupo de botones en tarjetas */
+.btn-group .btn {
+  border-radius: 6px;
+  margin: 0 2px;
+  padding: 0.4rem 0.6rem;
+  transition: all 0.2s ease;
+}
+
+.btn-group .btn:hover {
+  transform: scale(1.1);
+}
+
+/* ===== MEDIA QUERIES ===== */
+
+/* Tablets */
+@media (max-width: 991.98px) {
+  .profile-cover-img {
+    height: 250px;
+  }
+
+  .profile-img {
+    width: 120px;
+    height: 120px;
+    bottom: -60px;
+    left: 30px;
+  }
+
+  #ProfileContent {
+    margin-top: 4rem;
+    padding-top: 2rem;
+  }
+
+  .product-image {
+    height: 180px;
+  }
+}
+
+/* Móviles grandes */
+@media (max-width: 767.98px) {
+  .profile-cover-img {
+    height: 200px;
+  }
+
+  .profile-img {
+    width: 120px;
+    height: 120px;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  #ProfileContent {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+  }
+
+  .card-offer-header {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .product-image {
+    height: 160px;
+  }
+
+  .btn-group .btn {
+    padding: 0.3rem 0.5rem;
+    margin: 0 1px;
+  }
+
+  .btn-edit {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 575.98px) {
+  .profile-cover-img {
+    height: 180px;
+  }
+
+  .profile-img {
+    width: 120px;
+    height: 120px;
+    bottom: -40px;
+    border-width: 3px;
+  }
+
+  #ProfileContent {
+    margin-top: 2.5rem;
+  }
+
+  .product-image {
+    height: 140px;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+
+  .btn-group {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .btn-group .btn {
+    flex: 1;
+    min-width: 45px;
+    margin: 0.1rem;
+  }
+}
+
+/* Pantallas muy grandes */
+@media (min-width: 1400px) {
+  .profile-cover-img {
+    height: 350px;
+  }
+
+  .profile-img {
+    width: 180px;
+    height: 180px;
+    bottom: -90px;
+    left: 80px;
+  }
+
+  #ProfileContent {
+    margin-top: 6rem;
+  }
+}
+
+/* Ajustes para modo claro/oscuro existentes */
+body.light-theme .card {
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .profile-img {
+  border-color: #f8f9fa;
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+
+  .card,
+  .btn,
+  .profile-img,
+  .product-image {
+    transition: none;
+  }
+}
+
+/* Mejora para alta densidad de píxeles */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+
+  .profile-img,
+  .product-image {
+    image-rendering: -webkit-optimize-contrast;
+  }
 }
