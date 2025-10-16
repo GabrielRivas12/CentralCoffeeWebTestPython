@@ -22,7 +22,3 @@ def mapa():
 @home_bp.route('/rci')
 def rci():
     return render_template('screens/RCI/rci.html')
-
-@home_bp.route('/profile')
-def profile():
-    return render_template('screens/profile/AdminProfile.html')

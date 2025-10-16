@@ -1,79 +1,192 @@
-{% extends "base/BaseAdmin.html" %} {% block Titulo %} Perfil - Administrador {%
-endblock Titulo %} {% block body %}
+{% extends "base/BaseAdmin.html" %}
 
-<div class="container">
-  <div id="ProfileInfo" class="container flex-column">
-    <div id="Images" class="flex-column mb-3 position-relative">
-      <img src="{{url_for('static', filename='img/debugImages/ProfileCover.jpg')}}" id="ProfileCover"
-        class="img-fluid size-cover rounded" alt="Portada de perfil"
-        style="width: 100%; height: 150px; object-fit: cover" />
-      <img src="{{url_for('static', filename='img/debugImages/ImageProfile.jpg')}}" class="rounded-circle"
-        alt="Imagen de perfil" style="
-          width: 150px;
-          height: 150px;
-          object-fit: cover;
-          position: relative;
-          top: -75px;
-          left: 20px;
-          border: 4px solid white;
-        " />
+{% block Titulo %}Perfil - Administrador{% endblock Titulo %}
+
+{% block body %}
+<div class="container-fluid px-0">
+  <div id="ProfileInfo" class="container-fluid px-0">
+    <!-- Sección de Imágenes -->
+    <div id="Images" class="position-relative">
+      <img src="{{ user.fotoPortada }}" id="ProfileCover" class="img-fluid w-100 profile-cover-img"
+        alt="Portada de perfil" />
+      <div class="container">
+        <div class="row">
+          <div class="col-12 position-relative">
+            <img src="{{ user.fotoPerfil }}" class="rounded-circle profile-img position-absolute"
+              alt="Imagen de perfil" />
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="ProfileContent" class="p-4">
-      <!-- Sección "Sobre mí" -->
-      <div class="text-center">
-        <h2 class="card-title">Nombre de Administrador</h2>
-        <p class="card-text text-muted">
-          Una breve biografía o descripción sobre el administrador. Este texto
-          puede ser dinámico.
-        </p>
+    <!-- Contenido del Perfil -->
+    <div id="ProfileContent" class="container mt-5 pt-4">
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-10">
+
+          <!-- Sección "Sobre mí" -->
+          <div class="text-center mb-4">
+            <h1 class="h2 fw-bold text-dark mb-2">{{ user.nombre }}</h1>
+            <p class="lead text-muted mb-0">
+              {{ user.descripcion }}
+            </p>
+          </div>
+
+          <hr class="my-4" />
+
+          <!-- Ubicación -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h4 class="h5 fw-semibold mb-3">📍 Ubicación</h4>
+              <p class="mb-0 text-body">{{ user.ubicacion }}</p>
+            </div>
+          </div>
+
+          <!-- Product Cards -->
+          {% if productos %}
+          <div class="row" id="productCards">
+            {% for producto in productos %}
+            <div class="col-12 col-sm-6 col-lg-6 col-xl-4 mb-4">
+              <div class="card h-100 shadow-sm border-0">
+                <!-- Imagen del producto -->
+                <div class="card-img-container position-relative">
+                  <img src="{{ producto.imagen }}" class="card-img-top product-image" alt="{{ producto.titulo }}">
+                  <div class="card-offer-header position-absolute top-0 start-0 w-100">
+                    {{ producto.titulo }}
+                  </div>
+                </div>
+
+                <!-- Contenido de la tarjeta -->
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title h6 fw-bold mb-3">{{ producto.titulo }}</h5>
+
+                  <div class="product-info flex-grow-1">
+                    <p class="mb-2 small">
+                      <strong class="text-primary">Tipo:</strong>
+                      <span class="text-body">{{ producto.tipoCafe }}</span>
+                    </p>
+                    <p class="mb-2 small">
+                      <strong class="text-primary">Variedad:</strong>
+                      <span class="text-body">{{ producto.variedad }}</span>
+                    </p>
+                    <p class="mb-3 small">
+                      <strong class="text-primary">Precio por libra:</strong>
+                      <span class="text-success fw-bold">{{ producto.ofertaLibra }}</span>
+                    </p>
+                  </div>
+
+                  <!-- Botones de acción -->
+                  <div class="mt-auto pt-3">
+                    <div class="btn-group w-100" role="group">
+                      <!-- Aprobar -->
+                      <button class="btn btn-outline-success btn-sm px-2" title="Aprobar">
+                        <i class="fas fa-check"></i>
+                      </button>
+
+                      <!-- Editar -->
+                      <button class="btn btn-outline-primary btn-sm px-2" data-bs-toggle="modal"
+                        data-bs-target="#editarModal{{ loop.index }}" title="Editar">
+                        <i class="fas fa-edit"></i>
+                      </button>
+
+                      <!-- Información -->
+                      <button class="btn btn-outline-info btn-sm px-2" data-bs-toggle="modal"
+                        data-bs-target="#infoModal{{ loop.index }}" title="Información">
+                        <i class="fas fa-info-circle"></i>
+                      </button>
+
+                      <!-- Eliminar -->
+                      <form action="{{ url_for('ofertas.borrar_oferta', id=producto.id) }}" method="POST"
+                        class="d-inline delete-form">
+                        <button type="submit" class="btn btn-outline-danger btn-sm px-2" title="Eliminar"
+                          onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?')">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-5">
+            <div class="text-muted">
+              <i class="fas fa-coffee fa-3x mb-3"></i>
+              <h5>No hay productos disponibles</h5>
+              <p class="mb-0">Aún no has agregado ninguna oferta de café.</p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
       </div>
+    </div>
+  </div>
 
-      <hr class="my-4" />
-
-      <!-- Sección de Tarjetas -->
-      <h3 class="mb-3 text-center">Información Adicional</h3>
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        <!-- Tarjeta 1 (Placeholder) -->
-        <div class="col">
-          <div class="card h-100">
-            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Imagen de tarjeta" />
-            <div class="card-body">
-              <p class="card-text">
-                Descripción de la tarjeta. Aquí puedes poner información
-                relevante que luego cargarás con JS.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tarjeta 2 (Placeholder) -->
-        <div class="col">
-          <div class="card h-100">
-            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Imagen de tarjeta" />
-            <div class="card-body">
-              <p class="card-text">
-                Más detalles sobre los logros o datos importantes del negocio.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tarjeta 3 (Placeholder) -->
-        <div class="col">
-          <div class="card h-100">
-            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Imagen de tarjeta" />
-            <div class="card-body">
-              <p class="card-text">
-                Tercera tarjeta con su propia descripción. Flexible para
-                distintos tipos de contenido.
-              </p>
-            </div>
-          </div>
-        </div>
+  <!-- Botón Editar Perfil -->
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-6 col-lg-4 text-center">
+        <button type="button" class="btn btn-edit btn-lg w-100" data-bs-toggle="modal"
+          data-bs-target="#editProfileModal">
+          <i class="fas fa-edit me-2"></i>Editar Perfil
+        </button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Modal de Edición de Perfil -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="editProfileModalLabel">
+          <i class="fas fa-user-edit me-2"></i>Editar Perfil
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editProfileForm" action="{{ url_for('profile.update_profile') }}" method="POST"
+          enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-12 col-md-6 mb-3">
+              <label for="location" class="form-label fw-semibold">📍 Ubicación</label>
+              <input type="text" class="form-control" id="location" name="ubicacion" value="{{ user.ubicacion }}"
+                placeholder="Ingresa tu ubicación">
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+              <label for="profilePhoto" class="form-label fw-semibold">
+                <i class="fas fa-camera me-1"></i>Foto de Perfil
+              </label>
+              <input class="form-control" type="file" id="profilePhoto" name="profilePhoto" accept="image/*">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label fw-semibold">📝 Descripción</label>
+            <textarea class="form-control" id="description" name="descripcion" rows="4"
+              placeholder="Describe tu perfil...">{{ user.descripcion }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="coverPhoto" class="form-label fw-semibold">
+              <i class="fas fa-image me-1"></i>Foto de Portada
+            </label>
+            <input class="form-control" type="file" id="coverPhoto" name="coverPhoto" accept="image/*">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i>Cancelar
+        </button>
+        <button type="submit" form="editProfileForm" class="btn btn-save">
+          <i class="fas fa-save me-1"></i>Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock body %}
