@@ -18,7 +18,7 @@ def listar_ofertas():
     if request.method != 'GET':
         return "Método no permitido", 405
     else:
-        user = usrRepository.get_user_by_uid(session.get('user').get('uid'))
+        user = usrRepository.get_user_by_uid(session.get('user_uid'))
         productos = repository.obtener_todos()
 
         print(user)

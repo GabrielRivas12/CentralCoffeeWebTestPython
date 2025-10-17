@@ -6,13 +6,16 @@
     padding: 0 !important;
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Fallback for browsers that don't support dvh */
-    height: 100dvh; /* Dynamic viewport height for mobile */
+    height: 100vh;
+    /* Fallback for browsers that don't support dvh */
+    height: 100dvh;
+    /* Dynamic viewport height for mobile */
 }
 
 .chat-container {
     width: 100%;
-    height: 100%; /* Fill the full height of the modified .main-content */
+    height: 100%;
+    /* Fill the full height of the modified .main-content */
     background: white;
     display: flex;
     flex-direction: column;
@@ -54,7 +57,8 @@
 }
 
 .chat-content.with-messages {
-    padding-bottom: 80px; /* Espacio para el input normal */
+    padding-bottom: 80px;
+    /* Espacio para el input normal */
 }
 
 /* Contenedor del input centrado */
@@ -123,12 +127,12 @@
 .send-btn-centered {
     width: 50px;
     height: 50px;
-    border-radius: 50%;
+    border-top-right-radius: 25%;
     display: flex;
     justify-content: center;
     align-items: center;
     border: none;
-    background: #ff5722;
+    background: #ff5722 !important;
     color: white;
     transition: all 0.3s ease;
 }
@@ -159,6 +163,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -204,7 +209,7 @@
 }
 
 .input-container {
-    
+
     display: flex;
     padding: 12px;
     background: white;
@@ -212,7 +217,7 @@
     gap: 8px;
     align-items: flex-end;
     /* Add a subtle shadow for separation */
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
 }
 
@@ -239,7 +244,8 @@
     color: #999;
 }
 
-.clear-button, .send-button {
+.clear-button,
+.send-button {
     width: 40px;
     height: 40px;
     border-radius: 20px;
@@ -303,4 +309,4 @@
 
 .chat-content::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
-}   
+}
