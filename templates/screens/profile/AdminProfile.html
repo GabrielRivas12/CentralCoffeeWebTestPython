@@ -3,17 +3,27 @@
 {% block Titulo %}Perfil - Administrador{% endblock Titulo %}
 
 {% block body %}
-<div class="container-fluid px-0">
+<div class="container-fluid px-0 profile-container">
   <div id="ProfileInfo" class="container-fluid px-0">
     <!-- Sección de Imágenes -->
     <div id="Images" class="position-relative">
+      {%if user.fotoPortada %}
       <img src="{{ user.fotoPortada }}" id="ProfileCover" class="img-fluid w-100 profile-cover-img"
         alt="Portada de perfil" />
+      {% else %}
+      <img src="{{ url_for('static', filename='img/debugimages/ProfileCover.jpg') }}" id="ProfileCover"
+        class="img-fluid w-100 profile-cover-img" alt="Portada de perfil" />
+      {% endif %}
       <div class="container">
         <div class="row">
           <div class="col-12 position-relative">
+            {% if user.fotoPerfil %}
             <img src="{{ user.fotoPerfil }}" class="rounded-circle profile-img position-absolute"
               alt="Imagen de perfil" />
+            {% else %}
+            <img src="{{ url_for('static', filename='img/debugimages/ImageProfile.jpg') }}"
+              class="rounded-circle profile-img position-absolute" alt="Imagen de perfil" />
+            {% endif %}
           </div>
         </div>
       </div>
@@ -42,6 +52,7 @@
             </div>
           </div>
 
+          {% if user.role == 'comerciante' %}
           <!-- Product Cards -->
           {% if productos %}
           <div class="row" id="productCards">
@@ -119,6 +130,8 @@
             </div>
           </div>
           {% endif %}
+          {% endif %}
+
         </div>
       </div>
     </div>
