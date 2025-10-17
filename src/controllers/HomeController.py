@@ -23,6 +23,10 @@ def mapa():
 def rci():
     return render_template('screens/RCI/rci.html')
 
+@home_bp.route('/bandeja_entrada')
+def bandeja_entrada():
+    return render_template('screens/Bandeja_entrada/Bandeja_entrada.html')
+
 @home_bp.route('/bandeja')
 def bandeja_entrada():
     render_template('screens/Bandeja_entrada/Bandeja_entrada.html')
