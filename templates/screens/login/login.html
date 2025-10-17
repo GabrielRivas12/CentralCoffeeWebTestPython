@@ -5,17 +5,10 @@
       <div class="card login-card shadow">
         <div class="row g-0">
           <!-- Panel izquierdo con logo y mensaje -->
-          <div
-            class="col-md-6 login-left d-flex flex-column justify-content-center align-items-center text-white p-4"
-          >
+          <div class="col-md-6 login-left d-flex flex-column justify-content-center align-items-center text-white p-4">
             <div class="logo-container mb-3">
-              <img
-                src="{{ url_for('static', filename='img/logo.png') }}
-"
-                alt="Logo"
-                class="img-fluid"
-                style="max-width: 150px"
-              />
+              <img src="{{ url_for('static', filename='img/logo.png') }}
+" alt="Logo" class="img-fluid" style="max-width: 150px" />
             </div>
             <h1 class="welcome-text">¡Bienvenido!</h1>
             <p class="tagline">Donde comienza tu historia con el café</p>
@@ -25,14 +18,14 @@
           <!-- Panel derecho: Formulario de inicio de sesión -->
           <div class="col-md-6 login-right p-4">
             {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                {% for category, message in messages %}
-                  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                {% endfor %}
-              {% endif %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
             {% endwith %}
             <div class="brand text-center mb-4">{{ titulo_formulario }}</div>
 
@@ -45,53 +38,32 @@
             {% endif %}
 
             <form action="{{ url_for('login.login') }}" method="POST">
-              <div
-                class="brand mb-4"
-                style="
+              <div class="brand mb-4" style="
                   font-size: 32px;
                   font-weight: bold;
                   text-align: left;
                   color: #000;
-                "
-              >
+                ">
                 Login
               </div>
 
-              <!-- Botón Google con imagen -->
-              <button
-                type="button"
-                href="{{ url_for('ofertas.listar_ofertas') }}"
-                class="btn btn-google w-100 mb-2 d-flex align-items-center justify-content-center"
-              >
-                <img
-                  src="{{ url_for('static', filename='img/google-logo.png') }}"
-                  alt="Google"
-                  style="width: 20px; height: 20px; margin-right: 8px"
-                />
+              {# <!-- Botón Google con imagen -->
+              <button type="button" href="{{ url_for('ofertas.listar_ofertas') }}"
+                class="btn btn-google w-100 mb-2 d-flex align-items-center justify-content-center">
+                <img src="{{ url_for('static', filename='img/google-logo.png') }}" alt="Google"
+                  style="width: 20px; height: 20px; margin-right: 8px" />
                 Registrarse con Google
-              </button>
+              </button> #}
 
               <div class="mb-3">
                 <label for="correo" class="form-label">Correo</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="correo"
-                  name="email"
-                  placeholder="usuario@correo.com"
-                  required
-                />
+                <input type="email" class="form-control" id="correo" name="email" placeholder="usuario@correo.com"
+                  required />
               </div>
               <div class="mb-3">
                 <label for="clave" class="form-label">Contraseña</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="clave"
-                  name="password"
-                  placeholder="********"
-                  required
-                />
+                <input type="password" class="form-control" id="clave" name="password" placeholder="********"
+                  required />
               </div>
 
               <div class="mb-3 text-end">
@@ -102,10 +74,7 @@
                 </div>
               </div>
 
-              <a
-                href="{{ url_for('login.registro') }}"
-                class="btn btn-link-registro w-100 mb-3 text-center"
-              >
+              <a href="{{ url_for('login.registro') }}" class="btn btn-link-registro w-100 mb-3 text-center">
                 ¿No tienes cuenta? <span class="resaltar">Registrate</span>
               </a>
 
@@ -113,9 +82,6 @@
                 Iniciar sesión
               </button>
             </form>
-
-            <a href="{{url_for('ofertas.listar_ofertas')}}">No registro</a>
-
             {% if olvidaste_contraseña %}
             <p class="text-olvidado mt-2">¿Olvidaste tu contraseña?</p>
             {% endif %}

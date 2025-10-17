@@ -42,7 +42,6 @@ def login():
                     }
                 )
 
-
             data = response.json()
             if 'idToken' in data:
                 decoded_token = repository.authenticate_user(data['idToken'])

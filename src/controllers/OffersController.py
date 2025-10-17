@@ -18,12 +18,14 @@ def listar_ofertas():
     if request.method != 'GET':
         return "Método no permitido", 405
     else:
+        user = usrRepository.get_user_by_uid(session.get('user').get('uid'))
         productos = repository.obtener_todos()
 
+        print(user)
         # linea de debug
         for p in productos:
             print(f"Producto: {p.get('titulo')}, Imagen: {p.get('imagen')}")
-        return render_template(subDir + '/Ofertas.html', productos=productos, user=usrRepository.get_user_by_uid(session.get('user').get('uid')))
+        return render_template(subDir + '/Ofertas.html', productos=productos, user=user)
 
 
 # Crear-Oferta todas las ofertas
