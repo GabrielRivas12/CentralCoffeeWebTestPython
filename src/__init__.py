@@ -14,6 +14,7 @@ def create_app():
     from .controllers.LoginController import login_bp
     from .controllers.HomeController import home_bp
     from .controllers.ProfileController import profile_bp
+    from .controllers.ChatController import chat_bp
 
     # registro de controladores
     app.register_blueprint(ofertas_bp)
@@ -21,6 +22,7 @@ def create_app():
     app.register_blueprint(login_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(profile_bp)
+    app.register_blueprint(chat_bp)
 
     # --- Configuración adicional (si es necesaria) ---
     # Por ejemplo, cargar configuración desde un archivo o variables de entorno.

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, session, url_for
 from ..services.OffersRepositoryImpl import OffersRepositoryImpl
 from ..config.FirebaseConfig import db
 
@@ -19,7 +19,7 @@ def listar_ofertas():
         # linea de debug
         for p in productos:
             print(f"Producto: {p.get('titulo')}, Imagen: {p.get('imagen')}")
-        return render_template(subDir + '/Ofertas.html', productos=productos)
+        return render_template(subDir + '/Ofertas.html', productos=productos, user=session.get('user'))
 
 
 # Crear-Oferta todas las ofertas

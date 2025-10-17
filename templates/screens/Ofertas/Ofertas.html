@@ -92,10 +92,12 @@ endblock Titulo %} {% block body %}
     </div>
   </div>
 
+  {% if user.role == 'comerciante' %}
   <!-- Botón para crear nueva oferta -->
   <button class="btn btn-create-offer mb-4" data-bs-toggle="modal" data-bs-target="#crearOfertaModal">
     <i class="fas fa-plus"></i> Crear Nueva Oferta
   </button>
+  {% endif %}
 
   <!-- Product Cards -->
   <div class="row" id="productCards">
@@ -113,9 +115,11 @@ endblock Titulo %} {% block body %}
           </div>
           <div class="mt-3 d-flex justify-content-end gap-2">
 
+            {%if user.role == 'comerciante'%}
             <button class="btn btn-success btn-sm">
               <i class="fas fa-check"></i>
             </button>
+
 
             <!-- Editar -->
             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal{{ loop.index }}">
@@ -129,6 +133,7 @@ endblock Titulo %} {% block body %}
                 <i class="fas fa-trash"></i>
               </button>
             </form>
+            {% endif %}
 
             <!-- Info -->
             <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#infoModal{{ loop.index }}">
@@ -180,6 +185,13 @@ endblock Titulo %} {% block body %}
               <i class="fas fa-map-marker-alt"></i>
               Más información
             </button>
+
+            <form action="{{ url_for('chat.crear_chat')}}" method="POST">
+              <button type="summit" class="btn btn-chat">
+                <i class="fas">Enviar mensaje</i>
+              </button>
+              <input type="hidden" id="userId" name="id_receptor" value="{{ producto.userId }}" />
+            </form>
           </div>
         </div>
       </div>

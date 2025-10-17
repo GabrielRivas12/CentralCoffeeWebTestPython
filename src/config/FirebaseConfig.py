@@ -1,5 +1,6 @@
 import firebase_admin
 from firebase_admin import credentials, firestore, auth, exceptions
+from google.cloud.firestore_v1 import base_query
 from dotenv import get_key
 
 certPath = get_key(".env", "FIREBASE_CERT_PATH")
@@ -22,4 +23,8 @@ db = firestore.client(default_app)
 authClient = auth.Client(default_app)
 
 excpt = exceptions
+
+query = base_query
+
+
     

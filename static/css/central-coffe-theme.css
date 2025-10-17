@@ -27,6 +27,8 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .container-main {
@@ -413,6 +415,17 @@ body.light-theme .logout-button:hover {
   transition: all 0.3s ease;
 }
 
+.btn-chat {
+  background-color: #0056b3;
+  color: white !important;
+
+}
+
+.btn-chat:hover {
+  background-color: #f1a89b;
+  color: white !important;
+}
+
 .btn-save:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
@@ -583,4 +596,16 @@ body.light-theme .profile-img {
   .product-image {
     image-rendering: -webkit-optimize-contrast;
   }
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  /* Make it fill the main-content area */
+}
+
+#ProfileInfo {
+  flex-grow: 1;
+  /* Make the main info section grow, pushing the button down */
 }
