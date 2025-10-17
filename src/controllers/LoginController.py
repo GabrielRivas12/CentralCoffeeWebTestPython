@@ -98,3 +98,9 @@ def registro():
         except Exception as e:
             flash(f"Error al registrar usuario: {str(e)}", 'error')
             return str(e), 400
+
+@login_bp.route('/logout')
+def logout():
+    session.clear()
+    flash('Has cerrado sesión exitosamente.', 'success')
+    return redirect(url_for('login.login'))
