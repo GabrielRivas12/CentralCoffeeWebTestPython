@@ -1,6 +1,9 @@
 from .repository.IChatRepository import IChatRepository
 from ..config.FirebaseConfig import db, query
 import datetime
+from ..config.CryptoHelper import EncryptionManager
+
+crypto = EncryptionManager()
 
 class ChatRepositoryImpl(IChatRepository):
     
@@ -34,6 +37,28 @@ class ChatRepositoryImpl(IChatRepository):
         ])).stream()
 
         return [chat.id for chat in chats]
+
+    def obtener_mensajes(self, id_chat):
+
+        try: 
+            doc_ref = db.collection('chats').document(id_chat).collection('mensajes')
+            mensajes = doc_ref.stream()
+
+            resultados = []
+
+            for doc in mensajes:
+                data = doc.to_dict()
+                data['texto'] = crypto.decrypt_message(data['texto'])
+                print(data['texto'])
+                data['id'] = doc.id
+                resultados.append(data)
+
+            return resultados
+        except Exception as e:
+            print(f"Error al obtener subcolección: {e}")
+            return []
+        
+        return super().obtener_mensajes(id_chat)
 
     def añadir_mensaje(self, id_chat):
         return super().añadir_mensaje(id_chat)

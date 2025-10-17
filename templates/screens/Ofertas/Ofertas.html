@@ -186,7 +186,7 @@ endblock Titulo %} {% block body %}
               Más información
             </button>
 
-            <form action="{{ url_for('chat.crear_chat')}}" method="POST">
+            <form action="{{ url_for('chat.obtener_chats')}}" method="GET">
               <button type="summit" class="btn btn-chat">
                 <i class="fas">Enviar mensaje</i>
               </button>

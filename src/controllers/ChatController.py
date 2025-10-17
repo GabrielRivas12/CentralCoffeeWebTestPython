@@ -16,3 +16,11 @@ def crear_chat():
 
     id_chat = repository.crear_chat(id_emisor, id_receptor)
     return redirect(url_for('ofertas.listar_ofertas'))
+
+@chat_bp.route('/obtenerChats')
+def obtener_chats():
+    id_chat = "o5VKHigAzRO1C1RQuNfDOzIiJLf1_w8Vi1am0s2bpHC5EKsIzOChfR2I3"
+
+    repository.obtener_mensajes(id_chat)
+
+    return redirect(url_for('ofertas.listar_ofertas'))

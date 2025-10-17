@@ -17,3 +17,7 @@ class IChatRepository(ABC):
     @abstractmethod
     def obtener_chats_usuario(self, id_usuario: str) -> list:
         pass
+
+    @abstractmethod
+    def obtener_mensajes(self, id_chat: str) -> list:
+        pass
