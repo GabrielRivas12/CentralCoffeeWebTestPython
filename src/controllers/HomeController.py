@@ -1,6 +1,6 @@
 import json
 from dotenv import get_key
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from ..services.MapRepositoryImpl import MapRepositoryImpl
 
 mapRepository = MapRepositoryImpl()
@@ -18,11 +18,8 @@ def mapa():
     return render_template('screens/Mapa/mapa.html', locations=data_json, google_maps_api_key=api_key)
 
 # ---------------- Mapa ----------------
-
-@home_bp.route('/rci')
-def rci():
-    return render_template('screens/RCI/rci.html')
-
 @home_bp.route('/bandeja_entrada')
 def bandeja_entrada():
     return render_template('screens/Bandeja_entrada/Bandeja_entrada.html')
+
+    

@@ -1,0 +1,8 @@
+0 Café AAA
+1 Café AA
+2 Café A
+3 Café AB
+4 Café C
+5 Café Bits
+6 Café PB-1
+7 Café PB-2

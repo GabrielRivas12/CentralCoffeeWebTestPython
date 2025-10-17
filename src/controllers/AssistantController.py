@@ -1,5 +1,5 @@
 from dotenv import get_key
-from flask import Blueprint, jsonify, render_template, redirect, request, url_for
+from flask import Blueprint, flash, jsonify, render_template, redirect, request, url_for
 import requests
 
 assistant_bp = Blueprint('assistant', __name__)
@@ -42,3 +42,10 @@ def ask_gemini():
             
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@assistant_bp.route('/rci')
+def rci():
+    return render_template('screens/RCI/rci.html')
+
+

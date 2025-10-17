@@ -1,0 +1,317 @@
+{% extends "base/BaseAdmin.html" %}
+
+{% block body %}
+<div class="chat-container">
+    <!-- Header del Chat -->
+    <div class="chat-header">
+        <a href="{{ url_for('chat.obtener_chats') }}" class="back-button">&larr;</a>
+        {% if otro_usuario.foto_perfil and otro_usuario.foto_perfil != 'default_avatar.png' %}
+        <img src="{{ otro_usuario.foto_perfil }}" alt="{{ otro_usuario.nombre }}" class="avatar">
+        {% else %}
+        <div class="avatar-placeholder">
+            <span class="avatar-letter">{{ otro_usuario.nombre[0] | upper }}</span>
+        </div>
+        {% endif %}
+        <div class="chat-title">{{ otro_usuario.nombre }}</div>
+    </div>
+
+    <!-- Cuerpo de Mensajes -->
+    <div class="chat-body" id="chat-body">
+        {% for mensaje in mensajes %}
+        <div class="message-wrapper {% if mensaje.de == current_user_id %}sent{% else %}received{% endif %}">
+            <div class="message">
+                {{ mensaje.texto }}
+                <div class="timestamp">{{ mensaje.timestamp.strftime('%H:%M') if mensaje.timestamp else '' }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Input para nuevos mensajes -->
+    <div class="chat-footer">
+        <form id="message-form" class="message-form">
+            <input type="text" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off">
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Estilos generales y responsivos para la vista de chat */
+    :root {
+        --sent-bg: #DCF8C6;
+        --received-bg: #FFFFFF;
+        --page-bg: #E5DDD5;
+        --header-bg: #075E54;
+        --footer-bg: #f0f0f0;
+        --primary-text: #000;
+        --secondary-text: rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+            .chat-container {
+
+                display: grid;
+
+                grid-template-rows: auto 1fr auto; /* Header(auto) | Body(1fr) | Footer(auto) */
+
+                position: fixed;
+
+                top: 0;
+
+                bottom: 0;
+
+                right: 0;
+
+                left: 300px; /* Ancho del sidebar en desktop */
+
+                z-index: 100; /* Asegura que esté por encima de otro contenido si es necesario */
+
+            }
+
+    /* Header */
+    .chat-header {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+        /* background-color: var(--header-bg); */
+        /* Color de fondo eliminado */
+        color: black;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+        border-bottom: 1px solid #ccc;
+        /* Añadimos un borde para separar */
+    }
+
+    .back-button {
+        color: white;
+        text-decoration: none;
+        font-size: 24px;
+        margin-right: 10px;
+    }
+
+    .chat-header .avatar,
+    .chat-header .avatar-placeholder {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 12px;
+        object-fit: cover;
+    }
+
+    .chat-header .avatar-placeholder {
+        background-color: #b55034;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .chat-header .avatar-letter {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .chat-title {
+        font-weight: bold;
+    }
+
+    /* Cuerpo de mensajes */
+    .chat-body {
+        overflow-y: auto; /* Habilita el scroll solo para este elemento */
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message-wrapper {
+        display: flex;
+        margin-bottom: 10px;
+        max-width: 70%;
+    }
+
+    .message {
+        padding: 8px 12px;
+        border-radius: 18px;
+        position: relative;
+        font-size: 14.5px;
+        line-height: 1.4;
+        word-wrap: break-word;
+        /* Para que el texto largo no rompa el layout */
+    }
+
+    .timestamp {
+        font-size: 11px;
+        color: var(--secondary-text);
+        text-align: right;
+        margin-top: 4px;
+        margin-left: 8px;
+    }
+
+    /* Mensajes enviados (derecha) */
+    .message-wrapper.sent {
+        align-self: flex-end;
+    }
+
+    .message-wrapper.sent .message {
+        background-color: var(--sent-bg);
+        border-bottom-right-radius: 4px;
+    }
+
+    /* Mensajes recibidos (izquierda) */
+    .message-wrapper.received {
+        align-self: flex-start;
+    }
+
+    .message-wrapper.received .message {
+        background-color: var(--received-bg);
+        border-bottom-left-radius: 4px;
+    }
+
+    /* Footer */
+    .chat-footer {
+        padding: 10px;
+        background-color: var(--footer-bg);
+        border-top: 1px solid #ddd;
+        flex-shrink: 0;
+    }
+
+    .message-form {
+        display: flex;
+    }
+
+    #message-input {
+        flex: 1;
+        border: none;
+        padding: 12px;
+        border-radius: 24px;
+        font-size: 16px;
+    }
+
+    #message-input:focus {
+        outline: none;
+    }
+
+    .message-form button {
+        border: none;
+        background-color: #128C7E;
+        color: white;
+        padding: 0 18px;
+        border-radius: 24px;
+        margin-left: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .message-form button:hover {
+        background-color: #075E54;
+    }
+
+            /* Media Query para pantallas pequeñas */
+
+            @media (max-width: 991.98px) {
+
+                .chat-container {
+
+                    left: 0; /* En móvil no hay sidebar, ocupa todo el ancho */
+
+                    top: 56px; /* Altura de la navbar móvil para que no se solape */
+
+                }
+
+                .message-wrapper {
+
+                    max-width: 85%; /* Aumenta el ancho de las burbujas */
+
+                }
+
+                .chat-body {
+
+                    padding: 10px;
+
+                }
+
+            }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chatBody = document.getElementById('chat-body');
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.getElementById('message-input');
+        const chatId = '{{ chat_id }}';
+        const currentUserId = '{{ current_user_id }}';
+
+        // 1. Scroll al final de los mensajes
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // 2. Enviar mensaje con el formulario
+        messageForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const messageText = messageInput.value.trim();
+
+            if (messageText) {
+                fetch(`/api/chat/${chatId}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ texto: messageText }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'ok') {
+                            // Añadir mensaje a la UI dinámicamente
+                            addMessageToUI(messageText, 'sent');
+                            messageInput.value = '';
+                        } else {
+                            console.error('Error al enviar mensaje:', data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error en la red:', error));
+            }
+        });
+
+        // Función para añadir un mensaje a la UI
+        function addMessageToUI(text, type) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `message-wrapper ${type}`;
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            messageDiv.innerHTML = `${text}<div class="timestamp">${time}</div>`;
+
+            messageWrapper.appendChild(messageDiv);
+            chatBody.appendChild(messageWrapper);
+
+            // Scroll al nuevo mensaje
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // (Opcional) Polling para nuevos mensajes cada 5 segundos
+        setInterval(() => {
+            fetch(`/api/chat/${chatId}/messages`)
+                .then(response => response.json())
+                .then(mensajes => {
+                    // Lógica simple: si el número de mensajes cambió, recargar.
+                    // Una implementación más robusta compararía los IDs de los mensajes.
+                    const currentMessagesCount = document.querySelectorAll('.message-wrapper').length;
+                    if (mensajes.length > currentMessagesCount) {
+                        window.location.reload();
+                    }
+                });
+        }, 5000);
+    });
+</script>
+{% endblock %}

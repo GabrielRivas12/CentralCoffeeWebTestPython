@@ -609,3 +609,8 @@ body.light-theme .profile-img {
   flex-grow: 1;
   /* Make the main info section grow, pushing the button down */
 }
+
+.btn-success {
+  background-color: #0056b3;
+  color: white;
+}
