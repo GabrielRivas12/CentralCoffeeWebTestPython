@@ -22,3 +22,7 @@ def mapa():
 @home_bp.route('/rci')
 def rci():
     return render_template('screens/RCI/rci.html')
+
+@home_bp.route('/bandeja_entrada')
+def bandeja_entrada():
+    return render_template('screens/Bandeja_entrada/Bandeja_entrada.html')
