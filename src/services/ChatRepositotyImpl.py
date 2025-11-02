@@ -26,11 +26,9 @@ class ChatRepositoryImpl(IChatRepository):
     def crear_chat(self, id_emisor, id_receptor):
         doc_ref = db.collection('chats')
         
-        # Estructura corregida: guardar participantes como un array
         datos = {
             'participantes': [id_emisor, id_receptor],
             'creadoEn': datetime.datetime.now(datetime.timezone.utc),
-            'ultimoMensaje': None,
             'ultimaActualizacion': datetime.datetime.now(datetime.timezone.utc)
         }
 
@@ -41,14 +39,12 @@ class ChatRepositoryImpl(IChatRepository):
 
     def borrar_chat(self, id_chat):
         try:
-            # Primero borrar mensajes de la subcolección
             mensajes_ref = db.collection('chats').document(id_chat).collection('mensajes')
             mensajes = mensajes_ref.stream()
             
             for mensaje in mensajes:
                 mensaje.reference.delete()
             
-            # Luego borrar el chat
             db.collection('chats').document(id_chat).delete()
             return True
         except Exception as e:
@@ -153,7 +149,7 @@ class ChatRepositoryImpl(IChatRepository):
         
         ahora = datetime.datetime.now()
         
-        # Convertir a datetime si es necesario
+        # Convertir a datetime
         if isinstance(timestamp, str):
             try:
                 if 'T' in timestamp:
@@ -210,7 +206,7 @@ class ChatRepositoryImpl(IChatRepository):
             texto_guardar = crypto.encrypt_message(texto) if encriptar else texto
             
             mensaje_data = {
-                'de': id_emisor, # Corregido de 'emisor' a 'de'
+                'de': id_emisor,
                 'texto': texto_guardar,
                 'tipo': tipo,
                 'timestamp': datetime.datetime.now(datetime.timezone.utc),
@@ -221,11 +217,8 @@ class ChatRepositoryImpl(IChatRepository):
             mensaje_ref = chat_ref.collection('mensajes').add(mensaje_data)
             mensaje_id = mensaje_ref[1].id
             
-            # Actualizar chat principal
-            texto_visual = texto[:50] + "..." if len(texto) > 50 else texto
             chat_ref.update({
-                'ultimoMensaje': texto_visual,
-                'ultimaActualizacion': datetime.datetime.now()
+                'ultimaActualizacion': datetime.datetime.now(datetime.timezone.utc)
             })
             
             print(f"Mensaje agregado al chat {id_chat}")
@@ -242,8 +235,6 @@ class ChatRepositoryImpl(IChatRepository):
             
             from google.cloud.firestore_v1 import And
             
-            # Esta consulta requiere un índice compuesto en Firestore.
-            # Si no existe, Firestore devolverá un error con un enlace para crearlo.
             query = chat_ref.where(filter=And([
                 FieldFilter('participantes', 'array_contains', id_usuario1),
                 FieldFilter('participantes', 'array_contains', id_usuario2)
@@ -252,7 +243,6 @@ class ChatRepositoryImpl(IChatRepository):
             chats = query.stream()
             
             for chat in chats:
-                # Devuelve el primer chat que coincida
                 return chat.id
             
             return None

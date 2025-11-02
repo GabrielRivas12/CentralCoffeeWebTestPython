@@ -37,6 +37,34 @@ const FORBIDDEN_TOPICS = [
 const COFFEE_ADVISOR_URL = 'https://magicloops.dev/api/loop/f55cde9f-e4e9-4718-bc35-a9b086fdd1ff/run';
 const COFFEE_STATS_URL = 'https://magicloops.dev/api/loop/e4c3cd48-b631-4127-8279-47a4f924290e/run';
 
+// URL de la IA que genera el informe (NUEVO ENDPOINT ESPECÍFICO)
+const COFFEE_CLASSIFICATION_REPORT_URL = 'https://magicloops.dev/api/loop/f55cde9f-e4e9-4718-bc35-a9b086fdd1ff/run';
+
+// Función para obtener el informe de la otra IA
+async function getCoffeeReport(coffeeType) {
+    try {
+        console.log('📝 Solicitando informe keniano para:', coffeeType);
+        
+        const response = await fetch(COFFEE_CLASSIFICATION_REPORT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                question: `Genera un informe específico sobre la clasificación "${coffeeType}" en el sistema keniano de clasificación de café. Explica qué significa esta clasificación, sus características principales, calidad y estándares según el sistema keniano.`,
+                language: 'español'
+            })
+        });
+
+        const data = await response.json();
+        return data.response || 'Informe no disponible en este momento.';
+
+    } catch (error) {
+        console.error('❌ Error obteniendo el informe:', error);
+        return 'Error al generar el informe. Por favor, intenta nuevamente.';
+    }
+}
+
 // Funciones de utilidad
 const cleanText = (text) => {
     if (!text || typeof text !== 'string') return '';
@@ -242,7 +270,7 @@ class CoffeeAssistant {
         if (automaticResponse) {
             setTimeout(() => {
                 this.stopTypingIndicator();
-                this.addMessage(automaticResponse, 'ai');
+                this.addMessage(automaticResponse, 'bot');
             }, 1000);
             return;
         }
@@ -253,21 +281,24 @@ class CoffeeAssistant {
             
             setTimeout(() => {
                 this.stopTypingIndicator();
-                this.addMessage(aiResponse, 'ai');
+                this.addMessage(aiResponse, 'bot');
             }, 1000);
 
         } catch (error) {
             console.error('Error al procesar mensaje:', error);
             setTimeout(() => {
                 this.stopTypingIndicator();
-                this.addMessage('Error al procesar tu mensaje. Por favor, inténtalo de nuevo.', 'ai');
+                this.addMessage('Error al procesar tu mensaje. Por favor, inténtalo de nuevo.', 'bot');
             }, 1000);
         }
     }
     
     addMessage(text, sender) {
         const messageElement = document.createElement('div');
-        messageElement.className = `message ${sender}-message`;
+        
+        // CORREGIDO: Usar 'bot-message' en lugar de 'ai-message'
+        messageElement.className = `message ${sender === 'user' ? 'user-message' : 'bot-message'}`;
+        
         messageElement.textContent = text;
         
         this.chatContent.appendChild(messageElement);
@@ -282,7 +313,9 @@ class CoffeeAssistant {
         this.isTyping = true;
         
         const typingElement = document.createElement('div');
-        typingElement.className = 'message ai-message typing-indicator';
+        
+        // CORREGIDO: Usar 'bot-message' en lugar de 'ai-message'
+        typingElement.className = 'message bot-message typing-indicator';
         typingElement.id = 'typingIndicator';
         
         const dotsContainer = document.createElement('div');

@@ -5,8 +5,8 @@
     <!-- Header del Chat -->
     <div class="chat-header">
         <a href="{{ url_for('chat.obtener_chats') }}" class="back-button">&larr;</a>
-        {% if otro_usuario.foto_perfil and otro_usuario.foto_perfil != 'default_avatar.png' %}
-        <img src="{{ otro_usuario.foto_perfil }}" alt="{{ otro_usuario.nombre }}" class="avatar">
+        {% if otro_usuario.fotoPerfil and otro_usuario.fotoPerfil != 'default_avatar.png' %}
+        <img src="{{ otro_usuario.fotoPerfil }}" alt="{{ otro_usuario.nombre }}" class="avatar">
         {% else %}
         <div class="avatar-placeholder">
             <span class="avatar-letter">{{ otro_usuario.nombre[0] | upper }}</span>
@@ -17,6 +17,12 @@
 
     <!-- Cuerpo de Mensajes -->
     <div class="chat-body" id="chat-body">
+        <!-- Mensaje flotante de cifrado -->
+        <div class="floating-encryption-message">
+            <i class="fas fa-lock"></i>
+            Mensajes cifrados de extremo a extremo
+        </div>
+
         {% for mensaje in mensajes %}
         <div class="message-wrapper {% if mensaje.de == current_user_id %}sent{% else %}received{% endif %}">
             <div class="message">
@@ -37,15 +43,16 @@
 </div>
 
 <style>
-    /* Estilos generales y responsivos para la vista de chat */
     :root {
-        --sent-bg: #DCF8C6;
-        --received-bg: #FFFFFF;
-        --page-bg: #E5DDD5;
-        --header-bg: #075E54;
+        --sent-bg: #f1a89b;
+        --sent-text: white;
+        --received-bg: #E0E0E0; 
+        --page-bg: #FFFFFF;
+        --header-bg: #FFFFFF;
         --footer-bg: #f0f0f0;
         --primary-text: #000;
         --secondary-text: rgba(0, 0, 0, 0.4);
+        --send-button: #ED6D4A;
     }
 
     * {
@@ -55,44 +62,35 @@
     body {
         margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: var(--page-bg);
     }
 
-            .chat-container {
-
-                display: grid;
-
-                grid-template-rows: auto 1fr auto; /* Header(auto) | Body(1fr) | Footer(auto) */
-
-                position: fixed;
-
-                top: 0;
-
-                bottom: 0;
-
-                right: 0;
-
-                left: 300px; /* Ancho del sidebar en desktop */
-
-                z-index: 100; /* Asegura que esté por encima de otro contenido si es necesario */
-
-            }
+    .chat-container {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 300px; 
+        z-index: 100; 
+        background-color: var(--page-bg);
+    }
 
     /* Header */
     .chat-header {
         display: flex;
         align-items: center;
         padding: 10px 16px;
-        /* background-color: var(--header-bg); */
-        /* Color de fondo eliminado */
+        background-color: var(--header-bg);
         color: black;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         flex-shrink: 0;
         border-bottom: 1px solid #ccc;
-        /* Añadimos un borde para separar */
     }
 
     .back-button {
-        color: white;
+        color: black;
         text-decoration: none;
         font-size: 24px;
         margin-right: 10px;
@@ -117,18 +115,44 @@
     .chat-header .avatar-letter {
         font-size: 18px;
         font-weight: bold;
+        color: white;
     }
 
     .chat-title {
         font-weight: bold;
     }
 
-    /* Cuerpo de mensajes */
     .chat-body {
-        overflow-y: auto; /* Habilita el scroll solo para este elemento */
+        overflow-y: auto;
         padding: 20px;
         display: flex;
         flex-direction: column;
+        background-color: var(--page-bg);
+        position: relative;
+    }
+
+    .floating-encryption-message {
+        position: sticky;
+        align-self: center;
+        background-color: rgba(255, 255, 255, 0.95);
+        color: #666;
+        padding: 8px 16px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        border: 1px solid #e0e0e0;
+        z-index: 10;
+        margin-bottom: 10px;
+        backdrop-filter: blur(5px);
+        max-width: fit-content;
+    }
+
+    .floating-encryption-message i {
+        margin-right: 8px;
+        font-size: 12px;
     }
 
     .message-wrapper {
@@ -144,7 +168,6 @@
         font-size: 14.5px;
         line-height: 1.4;
         word-wrap: break-word;
-        /* Para que el texto largo no rompa el layout */
     }
 
     .timestamp {
@@ -155,17 +178,20 @@
         margin-left: 8px;
     }
 
-    /* Mensajes enviados (derecha) */
     .message-wrapper.sent {
         align-self: flex-end;
     }
 
     .message-wrapper.sent .message {
         background-color: var(--sent-bg);
+        color: var(--sent-text);
         border-bottom-right-radius: 4px;
     }
 
-    /* Mensajes recibidos (izquierda) */
+    .message-wrapper.sent .timestamp {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
     .message-wrapper.received {
         align-self: flex-start;
     }
@@ -193,15 +219,18 @@
         padding: 12px;
         border-radius: 24px;
         font-size: 16px;
+        background-color: white;
+        border: 1px solid #ddd;
     }
 
     #message-input:focus {
         outline: none;
+        border-color: #ED6D4A;
     }
 
     .message-form button {
         border: none;
-        background-color: #128C7E;
+        background-color: var(--send-button);
         color: white;
         padding: 0 18px;
         border-radius: 24px;
@@ -212,35 +241,32 @@
     }
 
     .message-form button:hover {
-        background-color: #075E54;
+        background-color: #d45a3a;
     }
 
-            /* Media Query para pantallas pequeñas */
+    @media (max-width: 991.98px) {
+        .chat-container {
+            left: 0;
+            top: 56px;
+        }
 
-            @media (max-width: 991.98px) {
+        .message-wrapper {
+            max-width: 85%;
+        }
 
-                .chat-container {
-
-                    left: 0; /* En móvil no hay sidebar, ocupa todo el ancho */
-
-                    top: 56px; /* Altura de la navbar móvil para que no se solape */
-
-                }
-
-                .message-wrapper {
-
-                    max-width: 85%; /* Aumenta el ancho de las burbujas */
-
-                }
-
-                .chat-body {
-
-                    padding: 10px;
-
-                }
-
-            }
+        .chat-body {
+            padding: 10px;
+        }
+        
+        .floating-encryption-message {
+            font-size: 11px;
+            padding: 6px 12px;
+            top: 5px;
+        }
+    }
 </style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -250,10 +276,8 @@
         const chatId = '{{ chat_id }}';
         const currentUserId = '{{ current_user_id }}';
 
-        // 1. Scroll al final de los mensajes
         chatBody.scrollTop = chatBody.scrollHeight;
 
-        // 2. Enviar mensaje con el formulario
         messageForm.addEventListener('submit', function (event) {
             event.preventDefault();
             const messageText = messageInput.value.trim();
@@ -269,7 +293,6 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'ok') {
-                            // Añadir mensaje a la UI dinámicamente
                             addMessageToUI(messageText, 'sent');
                             messageInput.value = '';
                         } else {
@@ -280,7 +303,6 @@
             }
         });
 
-        // Función para añadir un mensaje a la UI
         function addMessageToUI(text, type) {
             const messageWrapper = document.createElement('div');
             messageWrapper.className = `message-wrapper ${type}`;
@@ -299,13 +321,10 @@
             chatBody.scrollTop = chatBody.scrollHeight;
         }
 
-        // (Opcional) Polling para nuevos mensajes cada 5 segundos
         setInterval(() => {
             fetch(`/api/chat/${chatId}/messages`)
                 .then(response => response.json())
                 .then(mensajes => {
-                    // Lógica simple: si el número de mensajes cambió, recargar.
-                    // Una implementación más robusta compararía los IDs de los mensajes.
                     const currentMessagesCount = document.querySelectorAll('.message-wrapper').length;
                     if (mensajes.length > currentMessagesCount) {
                         window.location.reload();

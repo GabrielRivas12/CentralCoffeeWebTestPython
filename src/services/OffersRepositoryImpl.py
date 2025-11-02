@@ -23,7 +23,7 @@ class OffersRepositoryImpl(IOffersRepository):
             "imagen": data.get('imagen', ""),
             "lugarSeleccionado": data.get('lugarSeleccionado'),
             "userId": data.get('userId'),
-            "nuevo": data.get('nuevo', False)
+            "estado": "Activo"
         }
             print("Oferta a guardar:", nueva_oferta)
             db.collection("oferta").add(nueva_oferta)
@@ -39,6 +39,8 @@ class OffersRepositoryImpl(IOffersRepository):
             for doc in docs:
                 producto = doc.to_dict()
                 producto["id"] = doc.id
+                if 'estado' not in producto:
+                    producto['estado'] = 'Activo'
                 productos.append(producto)
             print(f"Obtenidas {len(productos)} ofertas")
             return productos
@@ -57,6 +59,8 @@ class OffersRepositoryImpl(IOffersRepository):
             for doc in query:
                 producto = doc.to_dict()
                 producto['id'] = doc.id
+                if 'estado' not in producto:
+                    producto['estado'] = 'Activo'
                 productos.append(producto)
 
             return productos
@@ -64,13 +68,37 @@ class OffersRepositoryImpl(IOffersRepository):
             print("Error al obtener la oferta:", e)
             return None
     
-    def actualizar(self, id, data):
-        
+    def obtener_por_id(self, id):
+        """
+        Obtiene una oferta específica por su ID de documento
+        """
         try:
-            db.collection("oferta").document(id).update(data)
-            print("Oferta actualizada:", data)
+            doc_ref = db.collection("oferta").document(id)
+            doc = doc_ref.get()
+            if doc.exists:
+                producto = doc.to_dict()
+                producto["id"] = doc.id
+                if 'estado' not in producto:
+                    producto['estado'] = 'Activo'
+                return producto
+            else:
+                print(f"Documento con id {id} no encontrado")
+                return None
         except Exception as e:
-            print("Error al actualizar el documento: " + e)
+            print("Error al obtener oferta por ID:", e)
+            return None
+    
+    def actualizar(self, id, data):
+        try:
+            if 'nuevo' in data:
+                data['nuevo']
+                
+            db.collection("oferta").document(id).update(data)
+            print(f"Oferta {id} actualizada: {data}")
+        except Exception as e:
+            print("Error al actualizar el documento: " + str(e))
+            import traceback
+            print(traceback.format_exc())
     
     def eliminar(self, id):
         db.collection("oferta").document(id).delete()
@@ -83,23 +111,22 @@ class OffersRepositoryImpl(IOffersRepository):
             # Extensión del archivo
             ext = file_obj.filename.split('.')[-1] if '.' in file_obj.filename else 'jpg'
 
-            # Generar nombre único
+            # Generar nombe
             if not file_key:
                 file_key = f"{uuid.uuid4()}.{ext}"   # aqui es donde la imagen se guarda en el supabase 
-            else:                                    # en la carpeta file
+            else:                                   
                 file_key = f"{file_key}"
 
             # Leer contenido
             file_obj.seek(0)
             contenido = file_obj.read()
 
-        # ✅ CORREGIDO: usar 'true' como string en lugar de True booleano
             res = supabase.storage.from_(bucket_name).upload(
                 file_key,
                 contenido,
                 {
                     "content-type": file_obj.content_type,
-                    "upsert": "true"  # ← AQUÍ ESTÁ LA CORRECCIÓN
+                    "upsert": "true"  
                 }
             )
             print("Respuesta Supabase:", res)
@@ -115,3 +142,20 @@ class OffersRepositoryImpl(IOffersRepository):
             import traceback
             print(traceback.format_exc())
             return ""
+        
+    def obtener_lugares(self):
+        """
+        Obtiene todos los lugares de la colección 'lugares'
+        """
+        try:
+            lugares = []
+            docs = db.collection("lugares").stream()
+            for doc in docs:
+                lugar = doc.to_dict()
+                lugar["id"] = doc.id
+                lugares.append(lugar)
+            print(f"Obtenidos {len(lugares)} lugares")
+            return lugares
+        except Exception as e:
+            print("Error al obtener lugares:", e)
+            return []

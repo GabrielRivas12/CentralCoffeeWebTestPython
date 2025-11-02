@@ -7,9 +7,9 @@ endblock Titulo %} {% block body %}
     --light-brown: #d2b48c;
     --background-color: #f8f9fa;
     --green: #28a745;
-    --blue: #007bff;
     --red: #dc3545;
     --orange: #fd7e14;
+    --custom-orange: #ED6D4A;
   }
 
   body,
@@ -73,6 +73,121 @@ endblock Titulo %} {% block body %}
     margin-bottom: 1rem;
     border-radius: 10px;
   }
+
+  .btn-create-offer {
+    background-color: #f1a89b !important;
+    border-color: #f1a89b !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
+  .btn-create-offer:hover,
+  .btn-create-offer:focus,
+  .btn-create-offer:active {
+    background-color: #e89587 !important;
+    border-color: #e89587 !important;
+    color: white !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .btn-inactive {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+  }
+
+  .btn-inactive:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    color: white;
+  }
+
+  .fa-circle-xmark {
+    font-size: 0.9em;
+  }
+
+  .info-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .info-item:last-child {
+    border-bottom: none;
+  }
+
+  .info-item strong {
+    min-width: 180px;
+    display: inline-block;
+  }
+
+  .btn-save {
+    background-color: #ED6D4A !important;
+    border-color: #ED6D4A !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
+  .btn-save:hover,
+  .btn-save:focus,
+  .btn-save:active {
+    background-color: #e55a35 !important;
+    border-color: #e55a35 !important;
+    color: white !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .btn-cancelar {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
+  .btn-cancelar:hover,
+  .btn-cancelar:focus,
+  .btn-cancelar:active {
+    background-color: #5a6268 !important;
+    border-color: #545b62 !important;
+    color: white !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .btn-more-info {
+    background-color: #ED6D4A !important;
+    border-color: #ED6D4A !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
+  .btn-more-info:hover,
+  .btn-more-info:focus,
+  .btn-more-info:active {
+    background-color: #e55a35 !important;
+    border-color: #e55a35 !important;
+    color: white !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .btn-chat {
+    background-color: #ED6D4A !important;
+    border-color: #ED6D4A !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
+  .btn-chat:hover,
+  .btn-chat:focus,
+  .btn-chat:active {
+    background-color: #e55a35 !important;
+    border-color: #e55a35 !important;
+    color: white !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
 </style>
 
 <!-- SweetAlert2 -->
@@ -92,7 +207,8 @@ endblock Titulo %} {% block body %}
     </div>
   </div>
 
-  {% if user.rol == 'comerciante' or user.rol == 'Comerciante' %}
+  {% if user.rol == 'comerciante' or user.rol == 'Comerciante' or user.rol == 'Administrador' or user.rol ==
+  'administrador' %}
   <!-- Botón para crear nueva oferta -->
   <button class="btn btn-create-offer mb-4" data-bs-toggle="modal" data-bs-target="#crearOfertaModal">
     <i class="fas fa-plus"></i> Crear Nueva Oferta
@@ -105,7 +221,6 @@ endblock Titulo %} {% block body %}
     <div class="col-md-4 mb-3">
       <div class="card">
         <img src="{{ producto.imagen }}" alt="{{ producto.titulo }}" />
-        <div class="card-header">{{ producto.titulo }}</div>
         <div class="card-body">
           <h5 class="card-title">{{ producto.titulo }}</h5>
           <div class="product-info">
@@ -115,11 +230,16 @@ endblock Titulo %} {% block body %}
           </div>
           <div class="mt-3 d-flex justify-content-end gap-2">
 
-            {%if user.rol == 'comerciante' or user.rol == 'Comerciante' and user.uid == producto.userId %}
-            <button class="btn btn-success btn-sm">
-              <i class="fas fa-check"></i>
-            </button>
-
+            {% if (user.rol == 'comerciante' or user.rol == 'Comerciante' and user.uid == producto.userId) or user.rol
+            == 'Administrador' or user.rol == 'administrador' %}
+            <!-- Botón para cambiar estado activo/inactivo -->
+            <form action="{{ url_for('ofertas.cambiar_estado_oferta', id=producto.id) }}" method="POST"
+              class="status-form" style="display: inline">
+              <button type="submit"
+                class="btn {% if producto.estado == 'Activo' %}btn-success{% else %}btn-inactive{% endif %} btn-sm">
+                <i class="{% if producto.estado == 'Activo' %}fas fa-check{% else %}fas fa-times-circle{% endif %}"></i>
+              </button>
+            </form>
 
             <!-- Editar -->
             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal{{ loop.index }}">
@@ -135,7 +255,6 @@ endblock Titulo %} {% block body %}
             </form>
             {% endif %}
 
-            <!-- Info -->
             <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#infoModal{{ loop.index }}">
               <i class="fas fa-info-circle"></i>
             </button>
@@ -152,45 +271,86 @@ endblock Titulo %} {% block body %}
         <div class="modal-content">
           <div class="modal-header" style="background-color: var(--primary-color); color: #fff">
             <h5 class="modal-title" id="infoModalLabel{{ loop.index }}">
-              Detalles del Producto - {{ producto.titulo }}
+              Detalles de la Oferta
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body">
-            <img src="{{ producto.imagen }}" alt="{{ producto.titulo }}" class="modal-product-img" />
-            <p><strong>Tipo:</strong> {{ producto.tipoCafe }}</p>
-            <p><strong>Variedad:</strong> {{ producto.variedad }}</p>
-            <p><strong>Precio por libra:</strong> {{ producto.ofertaLibra }}</p>
-            <p><strong>Clima:</strong> {{ producto.clima }}</p>
-            <p>
-              <strong>Fecha de cosecha:</strong> {{ producto.fechaCosecha }}
-            </p>
-            <p><strong>Altura:</strong> {{ producto.altura }}</p>
-            <p>
-              <strong>Cantidad de producción:</strong> {{
-              producto.cantidadProduccion }}
-            </p>
-            <p><strong>Estado del grano:</strong> {{ producto.estadoGrano }}</p>
-            <p>
-              <strong>Proceso de corte:</strong> {{ producto.procesoCorte }}
-            </p>
-            <p>
-              <strong>Lugar seleccionado:</strong> {{ producto.lugarSeleccionado
-              }}
-            </p>
-            <p><strong>Usuario:</strong> {{ producto.userId }}</p>
+            <!-- Imagen y título -->
+            <div class="text-center mb-4">
+              <img src="{{ producto.imagen }}" alt="{{ producto.titulo }}" class="modal-product-img" />
+              <h4 class="mt-3" style="color: var(--primary-color);">{{ producto.titulo }}</h4>
+            </div>
+
+            <!-- Información -->
+            <div class="row">
+              <!-- Columna izquierda -->
+              <div class="col-md-6">
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Tipo:</strong>
+                  <span class="ms-2">{{ producto.tipoCafe }}</span>
+                </div>
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Variedad:</strong>
+                  <span class="ms-2">{{ producto.variedad }}</span>
+                </div>
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Precio por libra:</strong>
+                  <span class="ms-2">${{ producto.ofertaLibra }}</span>
+                </div>
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Clima:</strong>
+                  <span class="ms-2">{{ producto.clima or 'No especificado' }}</span>
+                </div>
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Fecha de cosecha:</strong>
+                  <span class="ms-2">{{ producto.fechaCosecha or 'No especificada' }}</span>
+                </div>
+              </div>
+
+              <!-- Columna derecha -->
+              <div class="col-md-6">
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Altura:</strong>
+                  <span class="ms-2">{{ producto.altura or 'No especificada' }}</span>
+                </div>
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Cantidad de producción:</strong>
+                  <span class="ms-2">{{ producto.cantidadProduccion or 'No especificada' }} lbs</span>
+                </div>
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Estado del grano:</strong>
+                  <span class="ms-2">{{ producto.estadoGrano or 'No especificado' }}</span>
+                </div>
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Proceso de corte:</strong>
+                  <span class="ms-2">{{ producto.procesoCorte or 'No especificado' }}</span>
+                </div>
+                <div class="info-item mb-3">
+                  <strong style="color: var(--primary-color);">Lugar seleccionado:</strong>
+                  <span class="ms-2">
+                    {% if lugares_dict and producto.lugarSeleccionado in lugares_dict %}
+                    {{ lugares_dict[producto.lugarSeleccionado].nombre }}
+                    {% else %}
+                    No especificado
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-more-info">
+            <button type="button" class="btn btn-more-info"
+              onclick="redirectToMapWithMarker('{{ producto.lugarSeleccionado }}')">
               <i class="fas fa-map-marker-alt"></i>
-              Más información
+              Ver en Mapa
             </button>
 
             <form action="{{ url_for('chat.obtener_chats')}}" method="GET">
-              <button type="summit" class="btn btn-chat">
-                <i class="fas">Enviar mensaje</i>
+              <button type="submit" class="btn btn-chat">
+                <i class="fas fa-comments"></i> Enviar mensaje
               </button>
-              <input type="hidden" id="userId" name="id_receptor" value="{{ producto.userId }}" />
+              <input type="hidden" name="id_receptor" value="{{ producto.userId }}" />
             </form>
           </div>
         </div>
@@ -202,85 +362,97 @@ endblock Titulo %} {% block body %}
       aria-labelledby="editarModalLabel{{ loop.index }}" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <form action="{{ url_for('ofertas.editar_oferta', id=producto.id) }}" method="POST">
+          <form action="{{ url_for('ofertas.editar_oferta', id=producto.id) }}" method="POST"
+            enctype="multipart/form-data">
             <div class="modal-header" style="background-color: var(--primary-color); color: #fff">
               <h5 class="modal-title" id="editarModalLabel{{ loop.index }}">
                 Editar Oferta - {{ producto.titulo }}
               </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
               <div class="row g-3">
+                <!-- Imagen -->
+                <div class="col-md-12">
+                  <label for="imagen{{ loop.index }}" class="form-label">Imagen del Producto</label>
+                  <input type="file" class="form-control" id="imagen{{ loop.index }}" name="imagen" accept="image/*" />
+                  <div class="form-text">Selecciona una nueva imagen o mantén la actual</div>
+                  {% if producto.imagen %}
+                  <div class="mt-2">
+                    <small>Imagen actual:</small><br>
+                    <img src="{{ producto.imagen }}" alt="Imagen actual"
+                      style="max-width: 200px; max-height: 150px; border-radius: 5px;">
+                  </div>
+                  {% endif %}
+                </div>
+
                 <div class="col-md-6">
                   <label for="titulo{{ loop.index }}" class="form-label">Título</label>
                   <input type="text" class="form-control" id="titulo{{ loop.index }}" name="titulo"
-                    value="{{ producto.titulo }}" required />
+                    value="{{ producto.titulo }}" placeholder="Ej: Café Arábica Premium" required />
                 </div>
                 <div class="col-md-6">
                   <label for="tipoCafe{{ loop.index }}" class="form-label">Tipo de café</label>
                   <input type="text" class="form-control" id="tipoCafe{{ loop.index }}" name="tipoCafe"
-                    value="{{ producto.tipoCafe }}" required />
+                    value="{{ producto.tipoCafe }}" placeholder="Ej: Arábica, Robusta" required />
                 </div>
                 <div class="col-md-6">
                   <label for="variedad{{ loop.index }}" class="form-label">Variedad</label>
                   <input type="text" class="form-control" id="variedad{{ loop.index }}" name="variedad"
-                    value="{{ producto.variedad }}" required />
+                    value="{{ producto.variedad }}" placeholder="Ej: Bourbon, Caturra" required />
+                </div>
+                <div class="col-md-6">
+                  <label for="ofertaLibra{{ loop.index }}" class="form-label">Precio por libra ($)</label>
+                  <input type="number" class="form-control" id="ofertaLibra{{ loop.index }}" name="ofertaLibra"
+                    value="{{ producto.ofertaLibra }}" step="0.01" placeholder="Ej: 25.50" required />
                 </div>
                 <div class="col-md-6">
                   <label for="clima{{ loop.index }}" class="form-label">Clima</label>
                   <input type="text" class="form-control" id="clima{{ loop.index }}" name="clima"
-                    value="{{ producto.clima }}" />
+                    value="{{ producto.clima }}" placeholder="Ej: Tropical, Templado" />
                 </div>
                 <div class="col-md-6">
                   <label for="fechaCosecha{{ loop.index }}" class="form-label">Fecha de cosecha</label>
-                  <input type="text" class="form-control" id="fechaCosecha{{ loop.index }}" name="fechaCosecha"
+                  <input type="date" class="form-control" id="fechaCosecha{{ loop.index }}" name="fechaCosecha"
                     value="{{ producto.fechaCosecha }}" />
                 </div>
                 <div class="col-md-6">
-                  <label for="altura{{ loop.index }}" class="form-label">Altura</label>
+                  <label for="altura{{ loop.index }}" class="form-label">Altura (msnm)</label>
                   <input type="text" class="form-control" id="altura{{ loop.index }}" name="altura"
-                    value="{{ producto.altura }}" />
+                    value="{{ producto.altura }}" placeholder="Ej: 1200 msnm" />
                 </div>
                 <div class="col-md-6">
-                  <label for="cantidadProduccion{{ loop.index }}" class="form-label">Cantidad de producción</label>
-                  <input type="text" class="form-control" id="cantidadProduccion{{ loop.index }}"
-                    name="cantidadProduccion" value="{{ producto.cantidadProduccion }}" />
+                  <label for="cantidadProduccion{{ loop.index }}" class="form-label">Cantidad de producción
+                    (lbs)</label>
+                  <input type="number" class="form-control" id="cantidadProduccion{{ loop.index }}"
+                    name="cantidadProduccion" value="{{ producto.cantidadProduccion }}" placeholder="Ej: 500" />
                 </div>
                 <div class="col-md-6">
                   <label for="estadoGrano{{ loop.index }}" class="form-label">Estado del grano</label>
                   <input type="text" class="form-control" id="estadoGrano{{ loop.index }}" name="estadoGrano"
-                    value="{{ producto.estadoGrano }}" />
+                    value="{{ producto.estadoGrano }}" placeholder="Ej: Verde, Maduro" />
                 </div>
                 <div class="col-md-6">
                   <label for="procesoCorte{{ loop.index }}" class="form-label">Proceso de corte</label>
                   <input type="text" class="form-control" id="procesoCorte{{ loop.index }}" name="procesoCorte"
-                    value="{{ producto.procesoCorte }}" />
+                    value="{{ producto.procesoCorte }}" placeholder="Ej: Manual, Mecánico" />
                 </div>
-                <div class="col-md-6">
-                  <label for="ofertaLibra{{ loop.index }}" class="form-label">Precio por libra</label>
-                  <input type="text" class="form-control" id="ofertaLibra{{ loop.index }}" name="ofertaLibra"
-                    value="{{ producto.ofertaLibra }}" required />
-                </div>
-                <div class="col-md-6">
-                  <label for="imagen{{ loop.index }}" class="form-label">URL de imagen</label>
-                  <input type="text" class="form-control" id="imagen{{ loop.index }}" name="imagen"
-                    value="{{ producto.imagen }}" required />
-                </div>
-                <div class="col-md-6">
+
+                <!-- Combo box para lugar -->
+                <div class="col-md-12">
                   <label for="lugarSeleccionado{{ loop.index }}" class="form-label">Lugar seleccionado</label>
-                  <input type="text" class="form-control" id="lugarSeleccionado{{ loop.index }}"
-                    name="lugarSeleccionado" value="{{ producto.lugarSeleccionado }}" />
+                  <select class="form-select" id="lugarSeleccionado{{ loop.index }}" name="lugarSeleccionado" required>
+                    <option value="" disabled>Selecciona un lugar</option>
+                    {% for lugar in lugares %}
+                    <option value="{{ lugar.id }}" {% if producto.lugarSeleccionado==lugar.id %}selected{% endif %}>
+                      {{ lugar.nombre }} - {{ lugar.horario }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                  <div class="form-text">Selecciona el lugar donde se encuentra el producto</div>
                 </div>
-                <div class="col-md-6">
-                  <label for="userId{{ loop.index }}" class="form-label">Usuario</label>
-                  <input type="text" class="form-control" id="userId{{ loop.index }}" name="userId"
-                    value="{{ producto.userId }}" />
-                </div>
-                <div class="col-12 form-check mt-2">
-                  <input type="checkbox" class="form-check-input" id="nuevo{{ loop.index }}" name="nuevo" {% if
-                    producto.nuevo %}checked{% endif %} />
-                  <label class="form-check-label" for="nuevo{{ loop.index }}">Nuevo</label>
-                </div>
+
+                <input type="hidden" id="userId{{ loop.index }}" name="userId" value="{{ user.uid }}" />
               </div>
             </div>
             <div class="modal-footer">
@@ -295,11 +467,9 @@ endblock Titulo %} {% block body %}
         </div>
       </div>
     </div>
-
     {% endfor %}
   </div>
 
-  <!-- Modal Crear Oferta -->
   <!-- Modal Crear Oferta -->
   <div class="modal fade" id="crearOfertaModal" tabindex="-1" aria-labelledby="crearOfertaModalLabel"
     aria-hidden="true">
@@ -312,69 +482,83 @@ endblock Titulo %} {% block body %}
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
             <div class="row g-3">
+              <!-- Imagen primero -->
+              <div class="col-md-12">
+                <label for="imagen" class="form-label">Imagen del Producto</label>
+                <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*" required />
+                <div class="form-text">Selecciona una imagen para tu oferta</div>
+              </div>
+
               <div class="col-md-6">
                 <label for="titulo" class="form-label">Título</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required />
+                <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej: Café Arábica Premium"
+                  required />
               </div>
               <div class="col-md-6">
                 <label for="tipoCafe" class="form-label">Tipo de café</label>
-                <input type="text" class="form-control" id="tipoCafe" name="tipoCafe" required />
+                <input type="text" class="form-control" id="tipoCafe" name="tipoCafe" placeholder="Ej: Arábica, Robusta"
+                  required />
               </div>
               <div class="col-md-6">
                 <label for="variedad" class="form-label">Variedad</label>
-                <input type="text" class="form-control" id="variedad" name="variedad" required />
+                <input type="text" class="form-control" id="variedad" name="variedad" placeholder="Ej: Bourbon, Caturra"
+                  required />
+              </div>
+              <div class="col-md-6">
+                <label for="ofertaLibra" class="form-label">Precio por libra ($)</label>
+                <input type="number" class="form-control" id="ofertaLibra" name="ofertaLibra" step="0.01"
+                  placeholder="Ej: 25.50" required />
               </div>
               <div class="col-md-6">
                 <label for="clima" class="form-label">Clima</label>
-                <input type="text" class="form-control" id="clima" name="clima" />
+                <input type="text" class="form-control" id="clima" name="clima" placeholder="Ej: 25 - 30" />
               </div>
               <div class="col-md-6">
                 <label for="fechaCosecha" class="form-label">Fecha de cosecha</label>
-                <input type="text" class="form-control" id="fechaCosecha" name="fechaCosecha" />
+                <input type="date" class="form-control" id="fechaCosecha" name="fechaCosecha" />
               </div>
               <div class="col-md-6">
-                <label for="altura" class="form-label">Altura</label>
-                <input type="text" class="form-control" id="altura" name="altura" />
+                <label for="altura" class="form-label">Altura (msnm)</label>
+                <input type="text" class="form-control" id="altura" name="altura" placeholder="Ej: 1200 msnm" />
               </div>
               <div class="col-md-6">
-                <label for="cantidadProduccion" class="form-label">Cantidad de producción</label>
-                <input type="text" class="form-control" id="cantidadProduccion" name="cantidadProduccion" />
+                <label for="cantidadProduccion" class="form-label">Cantidad de producción (lbs)</label>
+                <input type="number" class="form-control" id="cantidadProduccion" name="cantidadProduccion"
+                  placeholder="Ej: 500" />
               </div>
               <div class="col-md-6">
                 <label for="estadoGrano" class="form-label">Estado del grano</label>
-                <input type="text" class="form-control" id="estadoGrano" name="estadoGrano" />
+                <input type="text" class="form-control" id="estadoGrano" name="estadoGrano"
+                  placeholder="Ej: Grano Oro" />
               </div>
               <div class="col-md-6">
                 <label for="procesoCorte" class="form-label">Proceso de corte</label>
-                <input type="text" class="form-control" id="procesoCorte" name="procesoCorte" />
+                <input type="text" class="form-control" id="procesoCorte" name="procesoCorte"
+                  placeholder="Ej: A mano" />
               </div>
-              <div class="col-md-6">
-                <label for="ofertaLibra" class="form-label">Precio por libra</label>
-                <input type="text" class="form-control" id="ofertaLibra" name="ofertaLibra" required />
+
+              <!-- Combo box para lugar -->
+              <div class="col-md-12">
+                <label for="lugarSeleccionado" class="form-label">Seleccionar ubicación</label>
+                <select class="form-select" id="lugarSeleccionado" name="lugarSeleccionado" required>
+                  <option value="" disabled selected>Selecciona un lugar</option>
+                  {% for lugar in lugares %}
+                  <option value="{{ lugar.id }}">
+                    {{ lugar.nombre }} - {{ lugar.horario }}
+                  </option>
+                  {% endfor %}
+                </select>
+                <div class="form-text">Selecciona una ubicación</div>
               </div>
-              <div class="col-md-6">
-                <label for="imagen" class="form-label">Imagen</label>
-                <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*" />
-              </div>
-              <div class="col-md-6">
-                <label for="lugarSeleccionado" class="form-label">Lugar seleccionado</label>
-                <input type="text" class="form-control" id="lugarSeleccionado" name="lugarSeleccionado" />
-              </div>
-              <div class="col-md-6">
-                <label for="userId" class="form-label">Usuario</label>
-                <input type="text" class="form-control" id="userId" name="userId" />
-              </div>
-              <div class="col-12 form-check mt-2">
-                <input type="checkbox" class="form-check-input" id="nuevo" name="nuevo" />
-                <label class="form-check-label" for="nuevo">Nuevo</label>
-              </div>
+
+              <input type="hidden" id="userId" name="userId" value="{{ user.uid }}" />
             </div>
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-save">Crear Oferta</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <button type="button" class="btn btn-cancelar" data-bs-dismiss="modal">
               Cancelar
             </button>
           </div>
@@ -382,53 +566,78 @@ endblock Titulo %} {% block body %}
       </div>
     </div>
   </div>
-
-  <script>
-    // Filtrar tarjetas
-    function filterCards() {
-      let input = document.getElementById("searchInput");
-      let filter = input.value.toLowerCase();
-      let cards = document
-        .getElementById("productCards")
-        .getElementsByClassName("card");
-
-      for (let i = 0; i < cards.length; i++) {
-        let title = cards[i].getElementsByClassName("card-title")[0];
-        cards[i].parentElement.style.display = title.innerText
-          .toLowerCase()
-          .includes(filter)
-          ? ""
-          : "none";
-      }
-    }
-
-    // Confirmación de eliminación
-    document.querySelectorAll(".delete-form").forEach((form) => {
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        Swal.fire({
-          title: "¿Deseas eliminar esta oferta?",
-          text: "Esta acción no se puede deshacer",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "Sí, eliminar",
-          cancelButtonText: "Cancelar",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            form.submit();
-          }
-        });
-      });
-    });
-
-    // Redirección al mapa desde "Más información"
-    document.querySelectorAll(".btn-more-info").forEach(function (button) {
-      button.addEventListener("click", function () {
-        window.location.href = "{{ url_for('home.mapa') }}";
-      });
-    });
-  </script>
-  {% endblock body %}
 </div>
+
+<script>
+  // Filtrar tarjetas
+  function filterCards() {
+    let input = document.getElementById("searchInput");
+    let filter = input.value.toLowerCase();
+    let cards = document
+      .getElementById("productCards")
+      .getElementsByClassName("card");
+
+    for (let i = 0; i < cards.length; i++) {
+      let title = cards[i].getElementsByClassName("card-title")[0];
+      cards[i].parentElement.style.display = title.innerText
+        .toLowerCase()
+        .includes(filter)
+        ? ""
+        : "none";
+    }
+  }
+
+  // Función para redirigir al mapa con el marcador específico
+  function redirectToMapWithMarker(lugarId) {
+    sessionStorage.setItem('selectedMarkerId', lugarId);
+    window.location.href = "{{ url_for('home.mapa') }}";
+  }
+
+  // Confirmación de eliminación
+  document.querySelectorAll(".delete-form").forEach((form) => {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      Swal.fire({
+        title: "¿Deseas eliminar esta oferta?",
+        text: "Esta acción no se puede deshacer",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
+    });
+  });
+
+  // cambiar estado
+  document.querySelectorAll(".status-form").forEach((form) => {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const button = this.querySelector('button');
+      const isCurrentlyActive = button.classList.contains('btn-success');
+      const newState = isCurrentlyActive ? 'inactivar' : 'activar';
+      const actionText = isCurrentlyActive ? 'desactivada' : 'activada';
+
+      Swal.fire({
+        title: `¿Deseas ${newState} esta oferta?`,
+        text: `La oferta será ${actionText} y ${isCurrentlyActive ? 'no' : 'sí'} será visible para los compradores`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: isCurrentlyActive ? "#6c757d" : "#28a745",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: `Sí, ${newState}`,
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
+    });
+  });
+</script>
+{% endblock body %}
