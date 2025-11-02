@@ -29,6 +29,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #f8f9fa;
 }
 
 .container-main {
@@ -37,16 +38,16 @@ body {
   width: 100%;
 }
 
-/* Sidebar para D ESKTOP */
+/* Sidebar para DESKTOP */
 .sidebar-desktop {
   position: fixed;
   height: 100vh;
   z-index: 1030;
   width: 300px;
-  background-color: #1f2a38;
-  color: #fff;
+  background-color: #f1a89b;
+  color: #212529;
   flex-shrink: 0;
-  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -59,13 +60,14 @@ body {
   margin-bottom: 30px;
   font-size: 24px;
   font-weight: bold;
+  color: #212529;
 }
 
 .sidebar-desktop .menu a,
 .offcanvas .menu a {
   display: flex;
   align-items: center;
-  color: #fff;
+  color: #212529;
   text-decoration: none;
   padding: 12px 20px;
   transition: background 0.3s;
@@ -75,11 +77,12 @@ body {
 .offcanvas .menu a i {
   margin-right: 12px;
   font-size: 18px;
+  color: #212529;
 }
 
 .sidebar-desktop .menu a:hover,
 .offcanvas .menu a:hover {
-  background-color: #2a3b4d;
+  background-color: #e9ecef;
 }
 
 .sidebar-desktop .bottom,
@@ -88,8 +91,12 @@ body {
 }
 
 .offcanvas-start {
-  background-color: #1f2a38;
-  color: #fff;
+  background-color: #f1a89b;
+  color: #212529;
+}
+
+.offcanvas-title {
+  color: #212529;
 }
 
 .main-content {
@@ -116,109 +123,53 @@ body {
   margin-left: 0;
 }
 
-.switch {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
 .logout-button {
   margin-top: 10px;
   display: block;
-  background: #2a3b4d;
+  background: #667A8A;
   padding: 10px;
   text-align: center;
   border-radius: 5px;
-  color: #fff;
+  color: #e9ecef;
   text-decoration: none;
+  transition: background 0.3s;
 }
 
 .logout-button:hover {
-  background-color: #3c5a78;
-  color: #fff;
-}
-
-/* ===================================================== */
-/* Estilos para el Tema Claro (Sidebar y Navbar Móvil) */
-/* ===================================================== */
-
-/* --- Sidebar y Offcanvas en Tema Claro --- */
-body.light-theme .sidebar-desktop,
-body.light-theme .offcanvas-start {
-  background-color: #f1a89b;
-  /* Color de fondo claro */
+  background-color: #dee2e6;
   color: #212529;
-  /* Texto oscuro */
-  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
-  /* Sombra más sutil */
 }
 
-/* --- Navbar Móvil en Tema Claro --- */
-body.light-theme .navbar.bg-dark {
+/* Navbar Móvil */
+.navbar.bg-dark {
   background-color: #f1a89b !important;
-  /* Forzamos el fondo claro sobre .bg-dark */
 }
 
-body.light-theme .map-header {
+.navbar .logo.text-white {
+  color: #212529 !important;
+}
+
+.navbar-dark .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+.map-header {
   background: #f1a89b !important;
   color: #212529 !important;
 }
 
-body.light-theme .map-header .map-controls button {
+.map-header .map-controls button {
   background: #667A8A !important;
   color: #e9ecef !important;
 }
 
-body.light-theme .map-header h1,
-body.light-theme .map-header h1 i {
+.map-header h1,
+.map-header h1 i {
   color: #212529 !important;
 }
 
-body.light-theme .map-header .map-controls button i {
+.map-header .map-controls button i {
   color: white !important;
-}
-
-/* Logo en la navbar móvil */
-body.light-theme .navbar .logo.text-white {
-  color: #212529 !important;
-  /* Forzamos el texto oscuro sobre .text-white */
-}
-
-/* Icono del menú hamburguesa (se invierte para que sea visible en fondo claro) */
-body.light-theme .navbar-dark .navbar-toggler-icon {
-  filter: invert(1);
-}
-
-
-/* --- Elementos Internos del Sidebar/Offcanvas en Tema Claro --- */
-
-body.light-theme .sidebar-desktop .logo,
-body.light-theme .offcanvas .logo,
-body.light-theme .sidebar-desktop .menu a,
-body.light-theme .offcanvas .menu a,
-body.light-theme .sidebar-desktop .menu a i,
-body.light-theme .offcanvas .menu a i,
-body.light-theme .offcanvas-title {
-  color: #212529;
-  /* Todo el texto e íconos a oscuro */
-}
-
-/* Hover de los enlaces del menú */
-body.light-theme .sidebar-desktop .menu a:hover,
-body.light-theme .offcanvas .menu a:hover {
-  background-color: #e9ecef;
-  /* Un gris claro para el hover */
-}
-
-/* Botón de Logout */
-body.light-theme .logout-button {
-  background: #667A8A;
-  color: #e9ecef;
-}
-
-body.light-theme .logout-button:hover {
-  background-color: #dee2e6;
 }
 
 /* === Mapa Interactivo === */
@@ -304,7 +255,6 @@ body.light-theme .logout-button:hover {
   background-color: #28a745;
   border-color: #28a745 !important;
   color: white !important;
-
 }
 
 .btn-save:hover {
@@ -327,6 +277,7 @@ body.light-theme .logout-button:hover {
   margin-bottom: 1.5rem;
   transition: transform 0.3s;
   overflow: hidden;
+  background-color: #ffffff;
 }
 
 /* ===== ESTILOS RESPONSIVE PARA PERFIL ===== */
@@ -371,6 +322,7 @@ body.light-theme .logout-button:hover {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   overflow: hidden;
+  background-color: #ffffff;
 }
 
 .card:hover {
@@ -418,7 +370,6 @@ body.light-theme .logout-button:hover {
 .btn-chat {
   background-color: #0056b3;
   color: white !important;
-
 }
 
 .btn-chat:hover {
@@ -567,13 +518,7 @@ body.light-theme .logout-button:hover {
   }
 }
 
-/* Ajustes para modo claro/oscuro existentes */
-body.light-theme .card {
-  background-color: #ffffff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-}
-
-body.light-theme .profile-img {
+.profile-img {
   border-color: #f8f9fa;
 }
 

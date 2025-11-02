@@ -9,17 +9,19 @@
             <!-- Los mensajes se agregarán aquí dinámicamente -->
         </div>
 
-        <!-- Input centrado cuando no hay mensajes -->
         <div class="centered-input-container" id="centeredInputContainer">
             <div class="centered-input-wrapper">
-
+                <div class="welcome-text">
+                    <h4>Bienvenido al Asistente IA</h4>
+                    <p>Pregúntame sobre café de Nicaragua y mucho más</p>
+                </div>
+                
                 <div class="input-group centered-input-group">
                     <textarea class="form-control centered-input-field" id="centeredMessageInput"
-                        placeholder="Pregúntame sobre café de Nicaragua..." rows="1"></textarea>
+                        placeholder="Escribe tu pregunta aquí..." rows="1"></textarea>
 
                     <div class="input-group-append">
-                        <button class="btn btn-primary rounded-circle send-btn-centered" id="sendButtonCentered"
-                            disabled>
+                        <button class="btn btn-primary send-btn-centered" id="sendButtonCentered" disabled>
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -28,17 +30,15 @@
         </div>
     </div>
 
-    <!-- Input normal en la parte inferior -->
     <div class="input-container" id="normalInputContainer" style="display: none;">
-        <textarea class="input-field" id="messageInput" placeholder="Pregúntame sobre café de Nicaragua..."
-            rows="1"></textarea>
+        <textarea class="input-field" id="messageInput" placeholder="Escribe tu mensaje..." rows="1"></textarea>
 
         <button class="clear-button" id="clearButton" title="Limpiar chat">
-            🗑️
+            <i class="fas fa-trash"></i>
         </button>
 
         <button class="send-button" id="sendButton" disabled>
-            ➤
+            <i class="fas fa-paper-plane"></i>
         </button>
     </div>
 </div>
@@ -46,4 +46,6 @@
 <!-- Enlaces a archivos externos -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbox.css') }}">
 <script src="{{ url_for('static', filename='js/chatbox.js') }}"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}

@@ -1,5 +1,7 @@
-{% extends "base/BaseAdmin.html" %} {% block Titulo %}Mapa Interactivo - Google
-Maps{% endblock Titulo %} {% block body %}
+{% extends "base/BaseAdmin.html" %} 
+{% block Titulo %}Mapa Interactivo - Google Maps{% endblock Titulo %} 
+
+{% block body %}
 <style>
   html,
   body,
@@ -19,42 +21,13 @@ Maps{% endblock Titulo %} {% block body %}
     padding: 0 !important;
   }
 
-  .map-header {
-    background: linear-gradient(135deg, #2c3e50, #4a6491);
-    color: white;
-    padding: 15px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1001;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-
-  .map-header h1 {
-    margin: 0;
-    font-size: 1.6rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .search-box-header {
-    flex-grow: 1;
-    min-width: 250px;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 25px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    font-size: 1rem;
-    outline: none;
-  }
-
   .map-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
     display: flex;
     gap: 12px;
+    z-index: 1000;
   }
 
   .map-controls button {
@@ -68,14 +41,14 @@ Maps{% endblock Titulo %} {% block body %}
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     transition: all 0.3s;
   }
 
   .map-controls button:hover {
     background-color: #2980b9;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   }
 
   #map {
@@ -84,142 +57,572 @@ Maps{% endblock Titulo %} {% block body %}
     z-index: 1;
   }
 
-  .info-panel {
-    position: absolute;
-    top: 95px;
-    /* Ajustado para no solapar */
-    right: 20px;
-    width: 320px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    padding: 20px;
-    display: none;
-    transition: all 0.3s ease;
-  }
-
-  .info-panel.active {
-    display: block;
-    animation: slideIn 0.3s ease;
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateX(20px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  .info-panel h3 {
-    margin-top: 0;
-    color: #2c3e50;
-    border-bottom: 2px solid #f1f1f1;
-    padding-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .close-panel {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 1.4rem;
-    cursor: pointer;
-    color: #7f8c8d;
-    transition: color 0.3s;
-  }
-
-  .close-panel:hover {
-    color: #e74c3c;
-  }
-
   .custom-info-window {
-    padding: 15px;
-    max-width: 250px;
+    padding: 12px 15px 15px 15px;
+    max-width: 320px;
+    min-width: 250px;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
   }
 
   .custom-info-window h3 {
-    margin-top: 0;
+    margin: 0 0 8px 0;
     color: #2c3e50;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
+    border-bottom: 2px solid #ED6D4A;
+    padding-bottom: 6px;
+    font-size: 1.1rem;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
-  .custom-info-window p {
+  .custom-info-window .horario {
+    color: #6c757d;
+    font-weight: bold;
     margin: 8px 0;
-    color: #555;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    line-height: 1.3;
   }
 
-  .custom-info-window button {
-    background-color: #3498db;
-    color: white;
+  .custom-info-window .descripcion {
+    margin: 10px 0 0 0;
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-align: left;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .info-divider {
+    height: 1px;
+    background-color: #f1a89b;
+    margin: 8px 0;
+  }
+
+  .admin-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .admin-buttons button {
+    flex: 1;
+    padding: 8px 12px;
     border: none;
-    padding: 8px 15px;
     border-radius: 4px;
     cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-    transition: background-color 0.3s;
+    font-size: 0.85rem;
+    transition: all 0.3s;
   }
 
-  .custom-info-window button:hover {
-    background-color: #2980b9;
+  .btn-editar {
+    background-color: #f39c12;
+    color: white;
+  }
+
+  .btn-editar:hover {
+    background-color: #e67e22;
+  }
+
+  .btn-eliminar {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .btn-eliminar:hover {
+    background-color: #c0392b;
+  }
+
+  /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 500px;
+    animation: modalSlideIn 0.3s ease-out;
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ED6D4A;
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.4rem;
+  }
+
+  .close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .close:hover {
+    color: #e74c3c;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: left;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #ED6D4A;
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: Arial, sans-serif;
+  }
+
+  .horario-selector {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .horario-time-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .horario-time-group label {
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: normal;
+    text-align: left;
+  }
+
+  .horario-separator {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #666;
+    padding: 0 5px;
+  }
+
+  .horario-current {
+    margin-top: 5px;
+    font-size: 0.75rem;
+    color: #3498db;
+    font-style: italic;
+    text-align: left;
+  }
+
+  .horario-new {
+    margin-top: 5px;
+    font-size: 0.75rem;
+    color: #27ae60;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .time-input {
+    width: 100% !important;
+  }
+
+  .modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 25px;
+  }
+
+  .modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+  }
+
+  .btn-cancelar {
+    background-color: #95a5a6;
+    color: white;
+  }
+
+  .btn-cancelar:hover {
+    background-color: #7f8c8d;
+  }
+
+  .btn-guardar {
+    background-color: #ED6D4A;
+    color: white;
+  }
+
+  .btn-guardar:hover {
+    background-color: #e55a35;
+  }
+
+  .swal2-popup.custom-swal {
+    padding: 25px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90% !important;
+    overflow-x: hidden !important;
+  }
+
+  .swal2-container {
+    overflow-x: hidden !important;
+  }
+
+  .custom-swal-title {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ED6D4A;
+    text-align: left;
+  }
+
+  .custom-swal-content {
+    padding: 0;
+    overflow-x: hidden !important;
+  }
+
+  .custom-form-group {
+    margin-bottom: 20px;
+  }
+
+  .custom-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 0.95rem;
+    text-align: left;
+  }
+
+  .custom-form-group input,
+  .custom-form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+  }
+
+  .custom-form-group input:focus,
+  .custom-form-group textarea:focus {
+    outline: none;
+    border-color: #ED6D4A;
+  }
+
+  .custom-form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: Arial, sans-serif;
+  }
+
+  .custom-horario-section {
+    margin: 20px 0;
+  }
+
+  .custom-horario-section .section-title {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    display: block;
+    text-align: left;
+  }
+
+  .custom-horario-selector {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .custom-time-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .custom-time-group label {
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: normal;
+    text-align: left;
+  }
+
+  .custom-time-separator {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #666;
+    padding: 0 5px;
+  }
+
+  .custom-time-input {
+    width: 100% !important;
+    padding: 10px !important;
+  }
+
+  .gm-style .gm-style-iw-c {
+    padding: 0 !important;
+    max-width: 350px !important;
+  }
+
+  .gm-style .gm-style-iw-t::after {
+    background: none !important;
+  }
+
+  .swal2-html-container {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+  }
+
+  .custom-swal {
+    padding: 20px !important;
+    border-radius: 10px !important;
+  }
+
+  .custom-swal-title {
+    color: #2c3e50 !important;
+    font-size: 1.4rem !important;
+    margin-bottom: 20px !important;
+    padding-bottom: 15px !important;
+    border-bottom: 2px solid #ED6D4A !important;
+    text-align: left !important;
+    width: 100% !important;
+  }
+
+  .custom-swal-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  .swal2-confirm {
+    background-color: #ED6D4A !important;
+  }
+
+  .swal2-confirm:hover {
+    background-color: #e55a35 !important;
+  }
+
+  .swal2-cancel {
+    background-color: #95a5a6 !important;
+  }
+
+  .custom-form-group {
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  .custom-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 0.95rem;
+    text-align: left;
+    width: 100%;
+  }
+
+  .custom-horario-section {
+    margin: 20px 0;
+    width: 100%;
+  }
+
+  .custom-horario-section .section-title {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    display: block;
+    text-align: left;
+  }
+
+  .custom-horario-selector {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .custom-time-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .custom-time-group label {
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: normal;
+    text-align: left;
+  }
+
+  .custom-time-separator {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #666;
+    padding: 0 5px;
   }
 </style>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
 <div class="container">
-  <div class="map-header">
-    <h1><i class="fas fa-map-marked-alt"></i> Mapa Interactivo - Nicaragua</h1>
-    {# <input id="searchBox" class="search-box-header" type="text" placeholder="Buscar ubicación..."> #}
-    <div class="map-controls">
-      <button id="resetView"><i class="fas fa-home"></i> Vista Inicial</button>
-      <button id="togglePanel">
-        <i class="fas fa-info-circle"></i> Información
-      </button>
-      <button id="addMarker">
-        <i class="fas fa-map-marker-alt"></i> Agregar Marcador
-      </button>
-    </div>
-
+  <div class="map-controls">
+    <button id="resetView"><i class="fas fa-home"></i> Vista Inicial</button>
+    {% if user_role == 'Administrador' %}
+    <button id="addMarker">
+      <i class="fas fa-map-marker-alt"></i> Agregar Marcador
+    </button>
+    {% endif %}
   </div>
 
   <div id="map"></div>
+</div>
 
-  <div class="info-panel" id="infoPanel">
-    <button class="close-panel">&times;</button>
-    <h3><i class="fas fa-info-circle"></i> Información de Ubicación</h3>
-    <div id="panelContent">
-      <p>Seleccione un marcador en el mapa para ver información detallada.</p>
+<!-- Modal para Editar Marcador -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Editar Marcador</h2>
+      <span class="close">&times;</span>
     </div>
+    <form id="editForm">
+      <input type="hidden" id="editDocId">
+      <input type="hidden" id="editUserId">
+      <input type="hidden" id="editLatitud">
+      <input type="hidden" id="editLongitud">
+      
+      <div class="form-group">
+        <label for="editNombre">Nombre:</label>
+        <input type="text" id="editNombre" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Horario:</label>
+        <div class="horario-selector">
+          <div class="horario-time-group">
+            <label>Hora de Apertura:</label>
+            <input type="time" id="editHoraApertura" class="time-input" required>
+            <div class="horario-current" id="currentApertura"></div>
+          </div>
+          <div class="horario-separator">-</div>
+          <div class="horario-time-group">
+            <label>Hora de Cierre:</label>
+            <input type="time" id="editHoraCierre" class="time-input" required>
+            <div class="horario-current" id="currentCierre"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="editDescripcion">Descripción:</label>
+        <textarea id="editDescripcion" required></textarea>
+      </div>
+      
+      <div class="modal-buttons">
+        <button type="button" class="btn-cancelar" id="cancelEdit">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button type="submit" class="btn-guardar">
+          <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/RenderMap.js') }}"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
 <script>
+  const userRole = "{{ user_role }}";
+  console.log("Rol del usuario en template:", userRole);
+  
   // Función para inicializar el mapa una vez que la API esté lista
   function initializeMap() {
-    const locations = {{ locations | safe
-  }};
-  initMap(locations);
+    const locations = {{ locations | safe }};
+    initMap(locations, userRole);
   }
-
 </script>
 
 <script async defer
   src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initializeMap">
-  </script>
+</script>
 
 <noscript>
   <div style="
@@ -238,7 +641,6 @@ Maps{% endblock Titulo %} {% block body %}
 </noscript>
 
 <script>
-  // Aplica estilos al contenedor principal para que el mapa ocupe todo el espacio.
   document.addEventListener('DOMContentLoaded', function () {
     const mainContent = document.querySelector('.main-content');
     if (mainContent) {

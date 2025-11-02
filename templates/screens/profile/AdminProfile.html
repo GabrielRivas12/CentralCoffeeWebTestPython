@@ -7,144 +7,97 @@
   <div id="ProfileInfo" class="container-fluid px-0">
     <!-- Sección de Imágenes -->
     <div id="Images" class="position-relative">
-      {%if user.fotoPortada %}
-      <img src="{{ user.fotoPortada }}" id="ProfileCover" class="img-fluid w-100 profile-cover-img"
-        alt="Portada de perfil" />
-      {% else %}
-      <img src="{{ url_for('static', filename='img/debugimages/ProfileCover.jpg') }}" id="ProfileCover"
-        class="img-fluid w-100 profile-cover-img" alt="Portada de perfil" />
-      {% endif %}
+      <!-- Foto de portada con ancho reducido -->
+      <div class="d-flex justify-content-center">
+        <div class="profile-cover-wrapper">
+          {%if user.fotoPortada %}
+          <img src="{{ user.fotoPortada }}" id="ProfileCover" class="img-fluid profile-cover-img rounded-4"
+            alt="Portada de perfil" style="height: 300px; object-fit: cover;" />
+          {% else %}
+          <img src="{{ url_for('static', filename='img/debugimages/ProfileCover.jpg') }}" id="ProfileCover"
+            class="img-fluid profile-cover-img rounded-4" alt="Portada de perfil"
+            style="height: 300px; object-fit: cover;" />
+          {% endif %}
+        </div>
+      </div>
+
       <div class="container">
-        <div class="row">
-          <div class="col-12 position-relative">
+        <div class="row align-items-end">
+          <div class="col-auto position-relative profile-pic-container" style="top: -60px;">
             {% if user.fotoPerfil %}
-            <img src="{{ user.fotoPerfil }}" class="rounded-circle profile-img position-absolute"
-              alt="Imagen de perfil" />
+            <img src="{{ user.fotoPerfil }}" class="rounded-circle profile-img border border-4 border-white shadow-sm"
+              alt="Imagen de perfil" style="width: 120px; height: 120px; object-fit: cover;" />
             {% else %}
             <img src="{{ url_for('static', filename='img/debugimages/ImageProfile.jpg') }}"
-              class="rounded-circle profile-img position-absolute" alt="Imagen de perfil" />
+              class="rounded-circle profile-img border border-4 border-white shadow-sm" alt="Imagen de perfil"
+              style="width: 120px; height: 120px; object-fit: cover;" />
             {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- información del usuario -->
+      <div class="container">
+        <div class="row">
+          <div class="col position-relative profile-info-container">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h1 class="h3 fw-bold text-dark">{{ user.nombre }}</h1>
+                <p class="text-muted ">
+                  {% if user.role == 'comerciante' %}
+                  Comerciante
+                  {% else %}
+                  {{ user.role|title }}
+                  {% endif %}
+                </p>
+              </div>
+              <!-- Botón Editar Perfil -->
+              <div class="edit-profile-btn-container" style="margin-right: 100px;">
+                <button type="button" class="btn btn-custom-edit" data-bs-toggle="modal"
+                  data-bs-target="#editProfileModal">
+                  <i class="fas fa-edit me-2"></i>Editar Perfil
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Contenido del Perfil -->
-    <div id="ProfileContent" class="container mt-5 pt-4">
+    <div id="ProfileContent" class="container mt-0 pt-0">
       <div class="row justify-content-center">
         <div class="col-12 col-lg-10 col-xl-10">
 
-          <!-- Sección "Sobre mí" -->
-          <div class="text-center mb-4">
-            <h1 class="h2 fw-bold text-dark mb-2">{{ user.nombre }}</h1>
-            <p class="lead text-muted mb-0">
+          <!-- Sección Sobre mí -->
+          <hr class="my-4" />
+          <div class="mb-4">
+            <h4 class="h5 fw-semibold mb-3">Sobre mí</h4>
+            {% if user.descripcion %}
+            <p class="text-muted mb-0">
               {{ user.descripcion }}
             </p>
+            {% else %}
+            <p class="text-muted mb-0">
+              Este usuario no tiene una descripción
+            </p>
+            {% endif %}
           </div>
-
-          <hr class="my-4" />
 
           <!-- Ubicación -->
           <div class="row mb-4">
             <div class="col-12">
               <h4 class="h5 fw-semibold mb-3">📍 Ubicación</h4>
-              <p class="mb-0 text-body">{{ user.ubicacion }}</p>
+              <p class="mb-0 text-body">
+                {% if user.ubicacion %}
+                {{ user.ubicacion }}
+                {% else %}
+                No especificado
+                {% endif %}
+              </p>
             </div>
           </div>
-
-          {% if user.role == 'comerciante' %}
-          <!-- Product Cards -->
-          {% if productos %}
-          <div class="row" id="productCards">
-            {% for producto in productos %}
-            <div class="col-12 col-sm-6 col-lg-6 col-xl-4 mb-4">
-              <div class="card h-100 shadow-sm border-0">
-                <!-- Imagen del producto -->
-                <div class="card-img-container position-relative">
-                  <img src="{{ producto.imagen }}" class="card-img-top product-image" alt="{{ producto.titulo }}">
-                  <div class="card-offer-header position-absolute top-0 start-0 w-100">
-                    {{ producto.titulo }}
-                  </div>
-                </div>
-
-                <!-- Contenido de la tarjeta -->
-                <div class="card-body d-flex flex-column">
-                  <h5 class="card-title h6 fw-bold mb-3">{{ producto.titulo }}</h5>
-
-                  <div class="product-info flex-grow-1">
-                    <p class="mb-2 small">
-                      <strong class="text-primary">Tipo:</strong>
-                      <span class="text-body">{{ producto.tipoCafe }}</span>
-                    </p>
-                    <p class="mb-2 small">
-                      <strong class="text-primary">Variedad:</strong>
-                      <span class="text-body">{{ producto.variedad }}</span>
-                    </p>
-                    <p class="mb-3 small">
-                      <strong class="text-primary">Precio por libra:</strong>
-                      <span class="text-success fw-bold">{{ producto.ofertaLibra }}</span>
-                    </p>
-                  </div>
-
-                  <!-- Botones de acción -->
-                  <div class="mt-auto pt-3">
-                    <div class="btn-group w-100" role="group">
-                      <!-- Aprobar -->
-                      <button class="btn btn-outline-success btn-sm px-2" title="Aprobar">
-                        <i class="fas fa-check"></i>
-                      </button>
-
-                      <!-- Editar -->
-                      <button class="btn btn-outline-primary btn-sm px-2" data-bs-toggle="modal"
-                        data-bs-target="#editarModal{{ loop.index }}" title="Editar">
-                        <i class="fas fa-edit"></i>
-                      </button>
-
-                      <!-- Información -->
-                      <button class="btn btn-outline-info btn-sm px-2" data-bs-toggle="modal"
-                        data-bs-target="#infoModal{{ loop.index }}" title="Información">
-                        <i class="fas fa-info-circle"></i>
-                      </button>
-
-                      <!-- Eliminar -->
-                      <form action="{{ url_for('ofertas.borrar_oferta', id=producto.id) }}" method="POST"
-                        class="d-inline delete-form">
-                        <button type="submit" class="btn btn-outline-danger btn-sm px-2" title="Eliminar"
-                          onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?')">
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-          {% else %}
-          <div class="text-center py-5">
-            <div class="text-muted">
-              <i class="fas fa-coffee fa-3x mb-3"></i>
-              <h5>No hay productos disponibles</h5>
-              <p class="mb-0">Aún no has agregado ninguna oferta de café.</p>
-            </div>
-          </div>
-          {% endif %}
-          {% endif %}
 
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Botón Editar Perfil -->
-  <div class="container mt-4">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-6 col-lg-4 text-center">
-        <button type="button" class="btn btn-edit btn-lg w-100" data-bs-toggle="modal"
-          data-bs-target="#editProfileModal">
-          <i class="fas fa-edit me-2"></i>Editar Perfil
-        </button>
       </div>
     </div>
   </div>
@@ -154,8 +107,8 @@
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="editProfileModalLabel">
+      <div class="modal-header" style="background-color: #f1a89b;">
+        <h5 class="modal-title text-white" id="editProfileModalLabel">
           <i class="fas fa-user-edit me-2"></i>Editar Perfil
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -165,29 +118,31 @@
           enctype="multipart/form-data">
           <div class="row">
             <div class="col-12 col-md-6 mb-3">
-              <label for="location" class="form-label fw-semibold">📍 Ubicación</label>
-              <input type="text" class="form-control" id="location" name="ubicacion" value="{{ user.ubicacion }}"
-                placeholder="Ingresa tu ubicación">
-            </div>
-            <div class="col-12 col-md-6 mb-3">
               <label for="profilePhoto" class="form-label fw-semibold">
                 <i class="fas fa-camera me-1"></i>Foto de Perfil
               </label>
               <input class="form-control" type="file" id="profilePhoto" name="profilePhoto" accept="image/*">
             </div>
+            <div class="col-12 col-md-6 mb-3">
+              <label for="coverPhoto" class="form-label fw-semibold">
+                <i class="fas fa-image me-1"></i>Foto de Portada
+              </label>
+              <input class="form-control" type="file" id="coverPhoto" name="coverPhoto" accept="image/*">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12 mb-3">
+              <label for="location" class="form-label fw-semibold">📍 Ubicación</label>
+              <input type="text" class="form-control" id="location" name="ubicacion" value="{{ user.ubicacion }}"
+                placeholder="Ingresa tu ubicación">
+            </div>
           </div>
 
           <div class="mb-3">
-            <label for="description" class="form-label fw-semibold">📝 Descripción</label>
+            <label for="description" class="form-label fw-semibold">📝 Sobre mí</label>
             <textarea class="form-control" id="description" name="descripcion" rows="4"
               placeholder="Describe tu perfil...">{{ user.descripcion }}</textarea>
-          </div>
-
-          <div class="mb-3">
-            <label for="coverPhoto" class="form-label fw-semibold">
-              <i class="fas fa-image me-1"></i>Foto de Portada
-            </label>
-            <input class="form-control" type="file" id="coverPhoto" name="coverPhoto" accept="image/*">
           </div>
         </form>
       </div>
@@ -195,11 +150,152 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           <i class="fas fa-times me-1"></i>Cancelar
         </button>
-        <button type="submit" form="editProfileForm" class="btn btn-save">
-          <i class="fas fa-save me-1"></i>Guardar Cambios
+        <button type="submit" form="editProfileForm" class="btn text-white" style="background-color: #ED6D4A; border-color: #ED6D4A;">
+          <i class="fas fa-save me-1 text-white"></i>Guardar Cambios
         </button>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .rounded-top-4 {
+    border-top-left-radius: 1rem !important;
+    border-top-right-radius: 1rem !important;
+  }
+
+  .profile-img {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .profile-cover-wrapper {
+    width: 85%;
+    margin: 0 auto;
+  }
+
+  .profile-cover-img {
+    width: 100% !important;
+    height: 300px;
+    object-fit: cover;
+  }
+
+  .profile-pic-container {
+    margin-left: 100px !important;
+    position: absolute;
+    z-index: 10;
+  }
+
+  .profile-info-container {
+    margin-top: -40px;
+    margin-left: 100px;
+    padding-bottom: 20px;
+  }
+
+  .edit-profile-btn-container {
+    margin-left: -300px;
+  }
+
+  .btn-custom-edit {
+    background-color: #ED6D4A !important;
+    border-color: #ED6D4A !important;
+    color: white !important;
+    transition: all 0.2s ease;
+  }
+
+  .btn-custom-edit:hover {
+    background-color: #e05a35 !important;
+    border-color: #e05a35 !important;
+    color: white !important;
+    transform: translateY(-1px);
+  }
+
+  .btn-custom-edit i {
+    color: white !important;
+  }
+
+  .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    .profile-cover-wrapper {
+      width: 95%;
+    }
+
+    .profile-cover-img {
+      height: 200px !important;
+    }
+
+    .profile-img {
+      width: 100px !important;
+      height: 100px !important;
+    }
+
+    .profile-pic-container {
+      margin-left: 0 !important;
+      position: relative;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      top: -40px !important;
+    }
+
+    .profile-info-container {
+      margin-left: 0 !important;
+      margin-top: 0;
+      text-align: center;
+      padding-bottom: 10px;
+    }
+
+    .edit-profile-btn-container {
+      margin-left: 0 !important;
+      margin-top: 10px;
+    }
+
+    .row.align-items-end {
+      text-align: center;
+      flex-direction: column;
+    }
+
+    .d-flex.justify-content-between {
+      flex-direction: column;
+      align-items: center !important;
+      text-align: center;
+    }
+
+    .btn-custom-edit {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .profile-cover-wrapper {
+      width: 100%;
+    }
+
+    .profile-cover-img {
+      height: 150px !important;
+      border-radius: 0.5rem !important;
+    }
+
+    .profile-img {
+      width: 80px !important;
+      height: 80px !important;
+    }
+
+    .profile-pic-container {
+      top: -30px !important;
+    }
+  }
+</style>
 {% endblock body %}

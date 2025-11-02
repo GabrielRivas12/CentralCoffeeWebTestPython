@@ -47,14 +47,6 @@
                 Login
               </div>
 
-              {# <!-- Botón Google con imagen -->
-              <button type="button" href="{{ url_for('ofertas.listar_ofertas') }}"
-                class="btn btn-google w-100 mb-2 d-flex align-items-center justify-content-center">
-                <img src="{{ url_for('static', filename='img/google-logo.png') }}" alt="Google"
-                  style="width: 20px; height: 20px; margin-right: 8px" />
-                Registrarse con Google
-              </button> #}
-
               <div class="mb-3">
                 <label for="correo" class="form-label">Correo</label>
                 <input type="email" class="form-control" id="correo" name="email" placeholder="usuario@correo.com"
@@ -98,7 +90,6 @@
     overflow: hidden;
   }
 
-  /* Panel izquierdo */
   .login-left {
     text-align: center;
     background-color: #f1a89b;
@@ -130,14 +121,12 @@
     color: #fff;
   }
 
-  /* Panel derecho */
   .login-right .brand {
     font-size: 28px;
     font-weight: bold;
     color: #ed6d4a;
   }
 
-  /* Botones */
   .btn-login {
     background-color: #ed6d4a;
     color: #fff;
@@ -149,7 +138,6 @@
     opacity: 0.9;
   }
 
-  /* Botón Google */
   .btn-google {
     background: #fff;
     color: #000;
@@ -173,7 +161,6 @@
     background: none;
     border: none;
     color: #000;
-    /* color del resto del texto */
     font-weight: normal;
     padding: 0;
     text-align: left;
@@ -184,11 +171,9 @@
     background: none;
     border: none;
     color: #000;
-    /* color del resto del texto */
     font-weight: normal;
     padding: 0;
     text-align: center;
-    /* centramos el contenido */
     cursor: pointer;
   }
 
@@ -201,13 +186,11 @@
     text-decoration: underline;
   }
 
-  /* Divider */
   .divider-text {
     color: #888;
     font-weight: bold;
   }
 
-  /* Texto “Olvidaste tu contraseña” */
   .text-olvidado {
     color: #ed6d4a;
     cursor: pointer;

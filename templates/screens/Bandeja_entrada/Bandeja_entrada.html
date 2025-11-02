@@ -14,7 +14,6 @@
             {% if chats %}
             {% for chat in chats %}
             <div class="chat-item" onclick="abrirChat('{{ chat.chat_id }}', '{{ chat.otro_usuario.nombre }}')">
-                {# Si hay foto de perfil y no es la de por defecto, la mostramos #}
                 {% if chat.otro_usuario.foto_perfil and chat.otro_usuario.foto_perfil != 'default_avatar.png' %}
                     <img src="{{ chat.otro_usuario.foto_perfil }}" alt="{{ chat.otro_usuario.nombre }}" class="avatar">
                 {# Si no hay foto, mostramos el avatar con la inicial #}
@@ -27,7 +26,9 @@
                 <div class="chat-content">
                     <div class="header-row">
                         <div class="chat-title">{{ chat.otro_usuario.nombre }}</div>
-                        <div class="chat-date">{{ chat.fecha_ultimo_mensaje }}</div>
+                        <div class="chat-date" data-timestamp="{{ chat.timestamp.isoformat() if chat.timestamp else '' }}">
+                            {{ chat.fecha_ultimo_mensaje }}
+                        </div>
                     </div>
                     <div class="chat-message">
                         {{ chat.ultimo_mensaje or 'No hay mensajes aún' }}
@@ -44,7 +45,6 @@
     </div>
 
     <style>
-        /* Estilos generales y responsivos para la bandeja de entrada */
         :root {
             --primary-bg: #fff;
             --secondary-bg: #f7f7f7;
@@ -78,9 +78,8 @@
 
         .inbox-container {
             width: 100%;
-            height: 100%; /* Ajustado para llenar el contenedor padre */
+            height: 100%; 
             margin: 0 auto;
-            /* background-color: var(--primary-bg); */ /* Color de fondo eliminado */
             display: flex;
             flex-direction: column;
         }
@@ -88,7 +87,6 @@
         .header {
             padding: 16px;
             border-bottom: 1px solid var(--border-color);
-            /* background-color: var(--primary-bg); */ /* Color de fondo eliminado */
             cursor: pointer;
             flex-shrink: 0;
         }
@@ -149,7 +147,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-width: 0; /* Evita que el contenido se desborde */
+            min-width: 0; 
         }
 
         .header-row {
@@ -188,7 +186,6 @@
             font-style: italic;
         }
         
-        /* Media Query para pantallas pequeñas */
         @media (max-width: 768px) {
             .inbox-container {
                 border-left: none;
@@ -202,23 +199,69 @@
     </style>
 
     <script>
-        // Solo mantenemos el JavaScript mínimo necesario para interactividad
         function abrirChat(chatId, nombreUsuario) {
             // Redirigir a la página del chat
             window.location.href = `/chat/${chatId}`;
-
-            // O si prefieres un modal:
-            // mostrarModalChat(chatId, nombreUsuario);
         }
 
         function mostrarModalChat(chatId, nombreUsuario) {
             alert(`Abriendo chat con: ${nombreUsuario} (ID: ${chatId})`);
-            // Aquí puedes implementar un modal para el chat
         }
 
-        // Cambiar tema con doble click en el header
         document.querySelector('.header').addEventListener('dblclick', function () {
             document.getElementById('inboxContainer').classList.toggle('dark-mode');
+        });
+
+        // Función para formatear fechas en tiempo real
+        function formatearFechas() {
+            const elementosFecha = document.querySelectorAll('.chat-date[data-timestamp]');
+            const ahora = new Date();
+            const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+            
+            elementosFecha.forEach(elemento => {
+                const timestamp = elemento.getAttribute('data-timestamp');
+                if (!timestamp) return;
+                
+                try {
+                    const fecha = new Date(timestamp);
+                    
+                    // Si es hoy, mostrar hora
+                    if (fecha >= hoy) {
+                        elemento.textContent = fecha.toLocaleTimeString('es-ES', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
+                    } 
+                    // Si es de esta semana, mostrar día de la semana
+                    else if (fecha >= new Date(hoy - 6 * 24 * 60 * 60 * 1000)) {
+                        elemento.textContent = fecha.toLocaleDateString('es-ES', { 
+                            weekday: 'short' 
+                        });
+                    }
+                    // Si es de este año, mostrar fecha sin año
+                    else if (fecha.getFullYear() === ahora.getFullYear()) {
+                        elemento.textContent = fecha.toLocaleDateString('es-ES', { 
+                            day: '2-digit', 
+                            month: '2-digit' 
+                        });
+                    }
+                    // Si es de otro año, mostrar fecha completa
+                    else {
+                        elemento.textContent = fecha.toLocaleDateString('es-ES', { 
+                            day: '2-digit', 
+                            month: '2-digit', 
+                            year: '2-digit' 
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error formateando fecha:', error);
+                }
+            });
+        }
+
+        // Ejecutar cuando se cargue la página
+        document.addEventListener('DOMContentLoaded', function() {
+            formatearFechas();
         });
     </script>
 </body>
