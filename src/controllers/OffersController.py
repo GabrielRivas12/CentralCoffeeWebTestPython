@@ -3,13 +3,21 @@ from ..services.OffersRepositoryImpl import OffersRepositoryImpl
 from ..services.UserRepository import UserRepositoryImpl
 from ..config.FirebaseConfig import db
 
-#creación de la instancia del repositorio
+# Crear instancias por defecto, pero permitir reemplazo
 repository = OffersRepositoryImpl()
 usrRepository = UserRepositoryImpl()
 
 subDir = 'screens/Ofertas'
 
 ofertas_bp = Blueprint('ofertas', __name__)
+
+# Función para configurar repositorios (útil para testing)
+def configure_repositories(offers_repo=None, user_repo=None):
+    global repository, usrRepository
+    if offers_repo:
+        repository = offers_repo
+    if user_repo:
+        usrRepository = user_repo
 
 # Listar todas las ofertas
 @ofertas_bp.route('/ofertas', methods=['GET'])
