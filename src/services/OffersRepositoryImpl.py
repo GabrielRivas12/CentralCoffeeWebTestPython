@@ -1,4 +1,3 @@
-from lib2to3.fixes.fix_filter import FixFilter
 from .repository.IOffersRepository import IOffersRepository
 from ..config.FirebaseConfig import db
 
