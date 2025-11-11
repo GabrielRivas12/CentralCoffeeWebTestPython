@@ -1,5 +1,5 @@
 import json
-from dotenv import get_key
+import os
 from flask import Blueprint, render_template, request, session, jsonify
 from ..services.MapRepositoryImpl import MapRepositoryImpl
 
@@ -9,7 +9,7 @@ home_bp = Blueprint('home', __name__)
 
 @home_bp.route('/mapa')
 def mapa():
-    api_key = get_key(".env", "MAPS_API_KEY")
+    api_key = os.environ.get('MAPS_API_KEY')
     data = mapRepository.getLocations()
     
     user_role = session.get('user_role', 'Comprador')  # Por defecto Comprador
@@ -19,7 +19,7 @@ def mapa():
     print(f"DEBUG - Sesión completa: {dict(session)}")
     
     data_json = json.dumps(data)
-    return render_template('screens/Mapa/mapa.html', 
+    return render_template('screens/Mapa/Mapa.html', 
                          locations=data_json, 
                          google_maps_api_key=api_key,
                          user_role=user_role)

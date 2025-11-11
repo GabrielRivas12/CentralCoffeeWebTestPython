@@ -1,17 +1,17 @@
-from dotenv import get_key
 from flask import Blueprint, flash, jsonify, render_template, redirect, request, url_for
 import requests
+import os
 
 assistant_bp = Blueprint('assistant', __name__)
 
 # 🔑 Clave de Gemini
-api_key = get_key(".env", "API_KEY")
+api_key = os.environ.get('API_KEY') 
 API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
 
 # 📌 Ruta para mostrar el chatbox
 @assistant_bp.route('/chatbox')
 def chatbox():
-    return render_template('screens/Chatbox/chatbox.html')
+    return render_template('screens/Chatbox/Chatbox.html')
 
 # 📌 Ruta para enviar mensajes a Gemini (proxy seguro)
 @assistant_bp.route('/ask_gemini', methods=['POST'])
@@ -46,6 +46,6 @@ def ask_gemini():
 
 @assistant_bp.route('/rci')
 def rci():
-    return render_template('screens/RCI/rci.html')
+    return render_template('screens/RCI/RCI.html')
 
 
