@@ -1,9 +1,9 @@
 from flask import Blueprint, flash, render_template, redirect, request, url_for, session
-from dotenv import get_key
 import requests
 from functools import wraps
 from ..services.AuthRepositoryImpl import AuthRepositoryImpl
 from ..services.UserRepository import UserRepositoryImpl
+import os
 
 repository = AuthRepositoryImpl()
 userRepository = UserRepositoryImpl()
@@ -47,7 +47,7 @@ def load_user():
             session['user'] = user_info
             session['user_role'] = user_role
 
-FIREBASE_API_KEY = get_key('.env', 'FIREBASE_API_KEY')
+FIREBASE_API_KEY = os.environ.get('FIREBASE_API_KEY')
 
 @login_bp.route('/', methods=['GET', 'POST'])
 def login():

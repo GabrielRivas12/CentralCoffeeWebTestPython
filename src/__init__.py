@@ -1,12 +1,12 @@
 from flask import Flask
-from dotenv import get_key
+import os
 
 def create_app():
     app = Flask(__name__, 
                 template_folder='../templates', 
                 static_folder='../static')
 
-    app.secret_key = get_key('.env', 'SECRET_KEY')
+    app.secret_key = os.environ.get('SECRET_KEY')
 
     # importación de controladores
     from .controllers.OffersController import ofertas_bp

@@ -3,9 +3,10 @@ from hashlib import md5
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
+import os
 
 # La clave secreta proporcionada por el usuario
-SECRET_KEY = "tu_clave_secreta_32_caracteres!!!".encode('utf-8')
+SECRET_KEY = os.environ.get("SECRET_KEY").encode('utf-8')
 
 def evp_bytes_to_key(password, salt, key_len, iv_len):
     """
