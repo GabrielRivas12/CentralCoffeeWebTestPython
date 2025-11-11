@@ -1,17 +1,16 @@
+import os
 import firebase_admin
 from firebase_admin import credentials, firestore, auth, exceptions
 from google.cloud.firestore_v1 import base_query
-from dotenv import get_key
 
-certPath = get_key(".env", "FIREBASE_CERT_PATH")
 
 cred = credentials.Certificate({
                 "type": "service_account",
-                "project_id": get_key('.env', 'PROJECT_ID'),
-                "private_key_id": get_key('.env', 'PRIVATE_KEY_ID'),
-                "private_key": get_key('.env', 'PRIVATE_KEY').replace('\\n', '\n'),
-                "client_email": get_key('.env', 'CLIENT_EMAIL'),
-                "client_id": get_key('.env', 'CLIENT_ID'),
+                "project_id": os.environ.get('PROJECT_ID'),
+                "private_key_id": os.environ.get('PRIVATE_KEY_ID'),
+                "private_key": os.environ.get('PRIVATE_KEY').replace('\\n', '\n'),
+                "client_email": os.environ.get('CLIENT_EMAIL'),
+                "client_id": os.environ.get('CLIENT_ID'),
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
             })
