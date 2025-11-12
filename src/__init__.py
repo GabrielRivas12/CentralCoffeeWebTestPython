@@ -46,4 +46,4 @@ def create_app():
             flash('Tu rol ya no tiene acceso al sistema.', 'error')
             return redirect(url_for('login.login'))
 
-        return app
+    return app
