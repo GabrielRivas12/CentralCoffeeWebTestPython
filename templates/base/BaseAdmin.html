@@ -10,32 +10,47 @@
   <link href="{{ url_for('static', filename='css/central-coffe-theme.css')}}" rel="stylesheet" />
   <style>
     /* Navbar móvil */
-    .navbar-dark.bg-dark {
-      background: #dc3545 !important; 
+    .navbar-mobile {
+      background: #ED6D4A !important; /* Mismo color naranja que desktop */
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      height: 60px;
     }
 
     .navbar-toggler {
       border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+    }
+
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
 
     .offcanvas-start {
-      background: #dc3545;
+      background: #ED6D4A; /* Mismo color naranja */
       color: white;
+      width: 320px; /* Drawer más ancho */
     }
 
     .offcanvas-header {
       border-bottom: 1px solid rgba(255,255,255,0.2);
       padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; /* Alinea solo el botón de cerrar a la derecha */
     }
 
     .offcanvas-title {
-      font-weight: 600;
-      color: white;
+      display: none; /* Oculta completamente el título "Menú" */
     }
 
     .btn-close.text-reset {
       filter: invert(1);
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    .btn-close.text-reset:hover {
+      opacity: 1;
     }
 
     .logo {
@@ -62,8 +77,9 @@
       transition: all 0.2s ease;
     }
 
-    .menu a:hover {
-      background: rgba(255,255,255,0.2);
+    .menu a:hover,
+    .menu a:active {
+      background: rgba(255,255,255,0.15); /* Mismo efecto para hover y touch */
       color: white;
     }
 
@@ -88,17 +104,27 @@
       border-radius: 6px;
       font-weight: 500;
       transition: background 0.2s ease;
+      text-decoration: none;
+      display: block;
+      text-align: center;
     }
 
-    .logout-button:hover {
-      background: rgba(255,255,255,0.3);
+    .logout-button:hover,
+    .logout-button:active {
+      background: rgba(255,255,255,0.25); /* Mismo efecto para hover y touch */
       color: white;
     }
 
     .sidebar-desktop {
-      background: #ED6D4A; /* Rojo */
+      background: #ED6D4A; /* Naranja */
       color: white;
       box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      width: 280px;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 1000;
     }
 
     .sidebar-desktop .logo {
@@ -114,7 +140,7 @@
     }
 
     .sidebar-desktop .menu a:hover {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.15);
     }
 
     .sidebar-desktop .menu a i {
@@ -123,6 +149,10 @@
 
     .sidebar-desktop .bottom {
       padding: 1rem;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
 
     .container-main {
@@ -134,11 +164,59 @@
       flex: 1;
       margin-left: 280px;
       background-color: #f8f9fa;
+      min-height: 100vh;
     }
 
+    /* Mobile styles */
     @media (max-width: 991.98px) {
       .main-content {
         margin-left: 0;
+        padding-top: 0;
+      }
+      
+      .sidebar-desktop {
+        display: none !important;
+      }
+      
+      .navbar-mobile .logo-text {
+        display: none; /* Oculta el texto CentralCoffee en móviles */
+      }
+      
+      .logo-mobile {
+        display: none !important; /* Oculta el logo en la appbar móvil */
+      }
+      
+      /* Asegurar que el offcanvas no ocupe toda la pantalla */
+      .offcanvas-start {
+        width: 320px !important; /* Drawer más ancho */
+        transform: translateX(-100%);
+      }
+      
+      .offcanvas.show {
+        transform: translateX(0);
+      }
+      
+      /* Centrar el navbar toggler cuando no hay logo */
+      .navbar-mobile .container-fluid {
+        justify-content: flex-start;
+      }
+
+      /* Efecto más suave para touch en móvil */
+      .menu a:active {
+        background: rgba(255,255,255,0.15);
+        transform: scale(0.98); /* Efecto de presión sutil */
+      }
+      
+      .logout-button:active {
+        background: rgba(255,255,255,0.25);
+        transform: scale(0.98); /* Efecto de presión sutil */
+      }
+    }
+
+    /* Desktop styles */
+    @media (min-width: 992px) {
+      .navbar-mobile {
+        display: none !important;
       }
     }
   </style>
@@ -146,21 +224,31 @@
 
 <body class="{% if full_screen %}full-screen{% endif %}">
   {% if not full_screen %}
-  <nav class="navbar navbar-dark bg-dark d-lg-none align-items-center">
+  <!-- Navbar móvil -->
+  <nav class="navbar navbar-mobile d-lg-none fixed-top">
     <div class="container-fluid">
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar"
         aria-controls="offcanvasSidebar">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="logo text-center text-white">
+      <!-- Logo oculto en móvil -->
+      <div class="logo-mobile d-none">
+        <img src="{{url_for('static', filename='img/logo.png')}}" height="35" alt="Central Coffee" />
+      </div>
+      
+      <!-- Este texto no se mostrará en móviles -->
+      <div class="logo-text text-center text-white d-none">
         <span class="fw-bold">CentralCoffee</span>
       </div>
+    </div>
   </nav>
 
+  <!-- Drawer móvil -->
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasSidebarLabel">Menú</h5>
+      <!-- Título oculto -->
+      <h5 class="offcanvas-title" id="offcanvasSidebarLabel" style="display: none;">Menú</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body d-flex flex-column justify-content-between">
@@ -190,7 +278,8 @@
 
   <div class="container-main">
     {% if not full_screen %}
-    <div class="sidebar-desktop d-none d-lg-flex">
+    <!-- Sidebar desktop -->
+    <div class="sidebar-desktop d-none d-lg-flex flex-column">
       <div>
         <div class="logo">
           <picture>
@@ -215,7 +304,11 @@
     </div>
     {% endif %}
 
+    <!-- Contenido principal -->
     <div class="main-content">
+      {% if not full_screen %}
+        <div class="d-lg-none" style="height: 60px;"></div> <!-- Espacio para navbar móvil -->
+      {% endif %}
       {% block body %}
       {% endblock %}
     </div>
