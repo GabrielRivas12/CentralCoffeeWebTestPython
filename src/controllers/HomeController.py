@@ -19,7 +19,7 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@home_bp.route('/mapa')
+@home_bp.route('/Mapa')
 def mapa():
     api_key = os.environ.get('MAPS_API_KEY')
     data = mapRepository.getLocations()

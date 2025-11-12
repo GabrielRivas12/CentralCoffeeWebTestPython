@@ -8,7 +8,7 @@ assistant_bp = Blueprint('assistant', __name__)
 api_key = os.environ.get('API_KEY') 
 API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
 
-@assistant_bp.route('/chatbox')
+@assistant_bp.route('/Chatbox')
 def chatbox():
     return render_template('screens/Chatbox/chatbox.html')
 
@@ -41,4 +41,4 @@ def ask_gemini():
 
 @assistant_bp.route('/rci')
 def rci():
-    return render_template('screens/RCI/rci.html')
+    return render_template('screens/RCI/RCI.html')
