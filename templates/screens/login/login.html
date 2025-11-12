@@ -1,14 +1,13 @@
 {% extends "base/BaseAdmin.html" %} {% block body %}
 <div class="container login-container my-5">
-  <div class="row w-100">
-    <div class="col-md-8 mx-auto">
+  <div class="row justify-content-center w-100">
+    <div class="col-12 col-md-8 mx-auto">
       <div class="card login-card shadow">
         <div class="row g-0">
           <!-- Panel izquierdo con logo y mensaje -->
           <div class="col-md-6 login-left d-flex flex-column justify-content-center align-items-center text-white p-4">
             <div class="logo-container mb-3">
-              <img src="{{ url_for('static', filename='img/logo.png') }}
-" alt="Logo" class="img-fluid" style="max-width: 150px" />
+              <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="img-fluid" style="max-width: 150px" />
             </div>
             <h1 class="welcome-text">¡Bienvenido!</h1>
             <p class="tagline">Donde comienza tu historia con el café</p>
@@ -194,6 +193,19 @@
   .text-olvidado {
     color: #ed6d4a;
     cursor: pointer;
+  }
+
+  @media (max-width: 767.98px) {
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 120px);
+    }
+    
+    .card.login-card {
+      margin: 0 auto;
+    }
   }
 </style>
 {% endblock %}
