@@ -1,6 +1,5 @@
-from flask import Flask
+from flask import Flask, session, redirect, url_for, flash, request
 import os
-
 def create_app():
     app = Flask(__name__, 
                 template_folder='../templates', 
@@ -8,7 +7,6 @@ def create_app():
 
     app.secret_key = os.environ.get('SECRET_KEY')
 
-    # importación de controladores
     from .controllers.OffersController import ofertas_bp
     from .controllers.AssistantController import assistant_bp
     from .controllers.LoginController import login_bp
@@ -17,7 +15,6 @@ def create_app():
     from .controllers.ChatController import chat_bp
     from .controllers.ChatViewController import chat_view_bp
 
-    # registro de controladores
     app.register_blueprint(ofertas_bp)
     app.register_blueprint(assistant_bp)
     app.register_blueprint(login_bp)
@@ -26,8 +23,27 @@ def create_app():
     app.register_blueprint(chat_bp)
     app.register_blueprint(chat_view_bp)
 
-    # --- Configuración adicional (si es necesaria) ---
-    # Por ejemplo, cargar configuración desde un archivo o variables de entorno.
-    # app.config.from_object('src.config.settings')
+    @app.before_request
+    def check_authentication():
+        public_routes = [
+            'login.login', 
+            'login.registro', 
+            'login.logout',
+            'static',
+            'home.home'
+        ]
+        
+        if request.endpoint in public_routes:
+            return
+            
+        if 'user_uid' not in session:
+            flash('Debes iniciar sesión para acceder a esta página.', 'error')
+            return redirect(url_for('login.login'))
+            
+        allowed_roles = ['Administrador', 'Comprador']
+        if session.get('user_role') not in allowed_roles:
+            session.clear()
+            flash('Tu rol ya no tiene acceso al sistema.', 'error')
+            return redirect(url_for('login.login'))
 
-    return app
+        return app

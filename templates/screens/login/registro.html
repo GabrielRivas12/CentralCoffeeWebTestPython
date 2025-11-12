@@ -1,81 +1,81 @@
 {% extends "base/BaseAdmin.html" %} {% block body %}
 <div class="container login-container my-5">
-  <div class="row w-100">
-    <div class="col-md-8 mx-auto">
+  <div class="row justify-content-center w-100">
+    <div class="col-12 col-md-8 mx-auto">
       <div class="card login-card shadow">
         <div class="row g-0">
-          <!-- Panel izquierdo con logo -->
-          <div class="col-md-6 login-left d-flex flex-column justify-content-center align-items-center text-white p-4"
-            style="background-color: #f1a89b">
-            <!-- Logo -->
+          <!-- Panel izquierdo con logo y mensaje -->
+          <div class="col-md-6 login-left d-flex flex-column justify-content-center align-items-center text-white p-4">
             <div class="logo-container mb-3">
-              <img src="
-                            
-                            {{ url_for('static', filename='img/logo.png') }}
-                            
-                            
-                            " alt="Cerne Logo" class="img-fluid" style="max-width: 150px" />
+              <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="img-fluid" style="max-width: 150px" />
             </div>
-
-            <!-- Texto de bienvenida -->
-            <h1 class="welcome-text">¡Únete a Cerne!</h1>
+            <h1 class="welcome-text">¡Bienvenido!</h1>
             <p class="tagline">Donde comienza tu historia con el café</p>
+            <div class="mt-4 text-center"></div>
           </div>
 
-          <!-- Panel derecho: Formulario de registro -->
+          <!-- Panel derecho: Formulario de inicio de sesión -->
           <div class="col-md-6 login-right p-4">
             {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                {% for category, message in messages %}
-                  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-            <div class="brand text-left mb-4" style="color: #000; font-size: 32px; font-weight: bold">
-              Crea tu cuenta
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <div class="brand text-center mb-4">{{ titulo_formulario }}</div>
 
-            <form action="{{ url_for('login.registro') }}" method="POST">
-              <div class="mb-3">
-                <label for="name" class="form-label">Nombre de Usuario</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Tu nombre completo"
-                  required />
+            {% if opcion_google %}
+            <div class="mb-3">
+              <button class="btn btn-google w-100 mb-3">
+                <i class="fab fa-google me-2"></i> {{ boton_google_texto }}
+              </button>
+            </div>
+            {% endif %}
+
+            <form action="{{ url_for('login.login') }}" method="POST">
+              <div class="brand mb-4" style="
+                  font-size: 32px;
+                  font-weight: bold;
+                  text-align: left;
+                  color: #000;
+                ">
+                Login
               </div>
 
               <div class="mb-3">
-                <label for="email" class="form-label">Correo</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="usuario@correo.com"
+                <label for="correo" class="form-label">Correo</label>
+                <input type="email" class="form-control" id="correo" name="email" placeholder="usuario@correo.com"
+                  required />
+              </div>
+              <div class="mb-3">
+                <label for="clave" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="clave" name="password" placeholder="********"
                   required />
               </div>
 
-              <div class="mb-3">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="********"
-                  required />
-              </div>
-
-              <div class="mb-3">
-                <label for="confirmar" class="form-label">Confirmar contraseña</label>
-                <input type="password" class="form-control" id="confirmar" name="confirmar" placeholder="********"
-                  required />
-              </div>
-
-              <!-- rol fijo como "Comprador" -->
-              <input type="hidden" name="rol" value="Comprador">
-
-              <div class="mb-3">
-                <div class="alert alert-info" role="alert">
-                  <strong>Nota:</strong> Tu cuenta se creará automáticamente como <strong>Comprador</strong>
+              <div class="mb-3 text-end">
+                <div class="mb-3 d-flex justify-content-end">
+                  <button type="button" class="btn btn-olvidado">
+                    ¿Olvidaste tu contraseña?
+                  </button>
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-login mb-3" style="width: auto; padding: 0.5rem 1rem; float: right">
-                Crear cuenta
+              <a href="{{ url_for('login.registro') }}" class="btn btn-link-registro w-100 mb-3 text-center">
+                ¿No tienes cuenta? <span class="resaltar">Registrate</span>
+              </a>
+
+              <button type="submit" class="btn btn-login w-100 mb-3">
+                Iniciar sesión
               </button>
             </form>
+            {% if olvidaste_contraseña %}
+            <p class="text-olvidado mt-2">¿Olvidaste tu contraseña?</p>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -91,7 +91,7 @@
 
   .login-left {
     text-align: center;
-    background-color: #f1a89b !important;
+    background-color: #f1a89b;
   }
 
   .logo-container img {
@@ -110,6 +110,16 @@
     margin-bottom: 20px;
   }
 
+  .login-left a.btn-switch {
+    color: #ed6d4a;
+    border-color: #ed6d4a;
+  }
+
+  .login-left a.btn-switch:hover {
+    background-color: #ed6d4a;
+    color: #fff;
+  }
+
   .login-right .brand {
     font-size: 28px;
     font-weight: bold;
@@ -117,19 +127,85 @@
   }
 
   .btn-login {
-    background-color: #ed6d4a !important;
+    background-color: #ed6d4a;
     color: #fff;
     border: none;
+    font-weight: bold;
   }
 
   .btn-login:hover {
     opacity: 0.9;
   }
 
-  .alert-info {
-    background-color: #e7f3ff;
-    border-color: #b3d9ff;
-    color: #0066cc;
+  .btn-google {
+    background: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+  }
+
+  .btn-olvidado {
+    background: none;
+    border: none;
+    color: #ed6d4a;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .btn-olvidado:hover {
+    text-decoration: underline;
+  }
+
+  .btn-link-registro {
+    background: none;
+    border: none;
+    color: #000;
+    font-weight: normal;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .btn-link-registro {
+    background: none;
+    border: none;
+    color: #000;
+    font-weight: normal;
+    padding: 0;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .btn-link-registro .resaltar {
+    color: #ed6d4a;
+    font-weight: bold;
+  }
+
+  .btn-link-registro:hover .resaltar {
+    text-decoration: underline;
+  }
+
+  .divider-text {
+    color: #888;
+    font-weight: bold;
+  }
+
+  .text-olvidado {
+    color: #ed6d4a;
+    cursor: pointer;
+  }
+
+  @media (max-width: 767.98px) {
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 120px);
+    }
+    
+    .card.login-card {
+      margin: 0 auto;
+    }
   }
 </style>
 {% endblock %}
