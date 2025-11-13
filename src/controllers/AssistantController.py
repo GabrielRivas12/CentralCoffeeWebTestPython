@@ -10,7 +10,7 @@ API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-f
 
 @assistant_bp.route('/Chatbox')
 def chatbox():
-    return render_template('screens/Chatbox/chatbox.html')
+    return render_template('screens/Chatbox/Chatbox.html')
 
 @assistant_bp.route('/ask_gemini', methods=['POST'])
 def ask_gemini():
