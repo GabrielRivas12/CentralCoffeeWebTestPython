@@ -4,7 +4,6 @@ import requests
 from functools import wraps
 import time
 import logging
-import json  # Añade esta importación
 from ..services.AuthRepositoryImpl import AuthRepositoryImpl
 from ..services.UserRepository import UserRepositoryImpl
 
@@ -15,21 +14,12 @@ logger = logging.getLogger(__name__)
 repository = AuthRepositoryImpl()
 userRepository = UserRepositoryImpl()
 
-
 login_bp = Blueprint("login", __name__, url_prefix='/login')
 
 baseDir = 'screens/login/'
 
-FIREBASE_API_KEY = get_key('.env', 'API_KEY')
+FIREBASE_API_KEY = get_key('.env', 'FIREBASE_API_KEY')
 
-if not FIREBASE_API_KEY:
-    logger.error("❌ CRÍTICO: NO SE ENCONTRÓ API_KEY EN .env")
-    logger.error("Revisa que tu archivo .env tenga: API_KEY = 'tu_api_key_aqui'")
-    # Si sigue fallando, usa la API key directamente
-    FIREBASE_API_KEY = "AIzaSyCJhLkIM4YqrI1tT9neYLSofwe9katbWWo"
-    logger.info(f"✅ API_KEY establecida manualmente: {FIREBASE_API_KEY[:10]}...")
-else:
-    logger.info(f"✅ API_KEY cargada correctamente desde .env: {FIREBASE_API_KEY[:10]}...")
 # Diccionario para almacenar tiempos de última solicitud por email (en memoria)
 reset_attempts = {}
 
@@ -146,26 +136,27 @@ def login():
 def reset_password():
     """Endpoint para enviar correo de recuperación de contraseña"""
     logger.info("=== INICIO reset_password ===")
-    logger.info(f"Request method: {request.method}")
-    logger.info(f"Request headers: {dict(request.headers)}")
-    logger.info(f"Request content type: {request.content_type}")
-    logger.info(f"Request is_json: {request.is_json}")
     
     try:
         # Verificar si es JSON
         if not request.is_json:
-            logger.error("❌ Request no es JSON")
-            logger.error(f"Content-Type recibido: {request.content_type}")
-            logger.error(f"Datos recibidos: {request.data}")
+            logger.error("Request no es JSON")
             return jsonify({
                 'success': False,
                 'error': 'Content-Type debe ser application/json'
             }), 400
         
         data = request.get_json()
-        logger.info(f"Datos JSON recibidos: {data}")
         email = data.get('email')
-        # ... el resto del código igual ...
+        
+        logger.info(f"Email recibido: {email}")
+        
+        if not email:
+            logger.error("Email no proporcionado")
+            return jsonify({
+                'success': False,
+                'error': 'El correo electrónico es requerido.'
+            }), 400
         
         # Verificar si ya se envió un correo recientemente (15 segundos)
         current_time = time.time()
@@ -186,7 +177,7 @@ def reset_password():
             logger.error("FIREBASE_API_KEY no configurada")
             return jsonify({
                 'success': False,
-                'error': 'Error de configuración del servidor: FIREBASE_API_KEY no encontrada.'
+                'error': 'Error de configuración del servidor.'
             }), 500
         
         logger.info(f"FIREBASE_API_KEY: {FIREBASE_API_KEY[:10]}...")
@@ -196,6 +187,7 @@ def reset_password():
         firebase_url = f'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={FIREBASE_API_KEY}'
         logger.info(f"URL Firebase: {firebase_url}")
         
+        # Enviar solicitud de recuperación a Firebase
         payload = {
             'requestType': 'PASSWORD_RESET',
             'email': email
@@ -211,16 +203,13 @@ def reset_password():
         )
         
         logger.info(f"Respuesta de Firebase - Status: {response.status_code}")
-        logger.info(f"Respuesta de Firebase - Text: {response.text}")
+        logger.info(f"Respuesta de Firebase - Headers: {dict(response.headers)}")
+        logger.info(f"Respuesta de Firebase - Text: {response.text[:500]}...")
         
         try:
             firebase_data = response.json()
-        except json.JSONDecodeError:
-            logger.error(f"Firebase devolvió respuesta no JSON: {response.text[:200]}")
-            return jsonify({
-                'success': False,
-                'error': 'Respuesta inválida del servicio de autenticación.'
-            }), 500
+        except:
+            firebase_data = {'error': 'No se pudo parsear JSON'}
         
         if response.status_code == 200:
             # Registrar el tiempo de esta solicitud
@@ -239,6 +228,7 @@ def reset_password():
             logger.error(f"Error de Firebase: {error_message}")
             logger.error(f"Respuesta completa: {firebase_data}")
             
+            # Mapear errores de Firebase a mensajes más amigables
             if 'EMAIL_NOT_FOUND' in error_message:
                 user_message = 'No existe una cuenta con este correo electrónico.'
             elif 'TOO_MANY_ATTEMPTS_TRY_LATER' in error_message:
@@ -273,7 +263,7 @@ def reset_password():
         logger.error(f"Error en reset_password: {str(e)}", exc_info=True)
         return jsonify({
             'success': False,
-            'error': 'Error interno del servidor. Por favor intenta más tarde.'
+            'error': 'Error interno del servidor. Por favor intenta nuevamente.'
         }), 500
     finally:
         logger.info("=== FIN reset_password ===")
@@ -288,6 +278,34 @@ def test_connection():
         'timestamp': time.time()
     })
 
+@login_bp.route('/test-firebase', methods=['POST'])
+def test_firebase():
+    """Endpoint para probar directamente la conexión con Firebase"""
+    try:
+        data = request.get_json()
+        email = data.get('email', 'test@example.com')
+        
+        logger.info(f"Probando Firebase con email: {email}")
+        
+        response = requests.post(
+            f'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={FIREBASE_API_KEY}',
+            json={
+                'requestType': 'PASSWORD_RESET',
+                'email': email
+            },
+            timeout=10
+        )
+        
+        return jsonify({
+            'success': True,
+            'firebase_status': response.status_code,
+            'firebase_response': response.text[:500]
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @login_bp.route('/registro', methods=['GET','POST'])
 def registro():
@@ -336,17 +354,19 @@ def logout():
     flash('Has cerrado sesión exitosamente.', 'success')
     return redirect(url_for('login.login'))
 
-@login_bp.errorhandler(404)
-def not_found_error(error):
-    return jsonify({
-        'success': False,
-        'error': 'Endpoint no encontrado'
-    }), 404
-
-@login_bp.errorhandler(500)
-def internal_error(error):
-    logger.error(f"Error interno del servidor: {str(error)}")
-    return jsonify({
-        'success': False,
-        'error': 'Error interno del servidor'
-    }), 500
+# Función opcional para verificar validez del token (puedes usarla en before_request)
+def verify_token_still_valid():
+    """Verifica si el token de Firebase sigue siendo válido"""
+    if 'user_token' not in session:
+        return False
+    
+    try:
+        # Verificar con Firebase que el token sigue válido
+        response = requests.post(
+            f'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={FIREBASE_API_KEY}',
+            json={'idToken': session['user_token']},
+            timeout=10
+        )
+        return response.status_code == 200
+    except:
+        return False
