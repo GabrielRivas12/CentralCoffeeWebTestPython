@@ -188,6 +188,29 @@ endblock Titulo %} {% block body %}
     box-shadow: none !important;
     outline: none !important;
   }
+
+  /* Estilos responsive para la barra de búsqueda */
+  @media (max-width: 767.98px) {
+    .search-bar .input-group {
+      width: 100% !important;
+    }
+    
+    .search-bar {
+      padding: 0 10px;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .search-bar .input-group {
+      width: 50% !important;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .search-bar .input-group {
+      width: 25% !important;
+    }
+  }
 </style>
 
 <!-- SweetAlert2 -->
@@ -196,9 +219,9 @@ endblock Titulo %} {% block body %}
 <div class="container-fluid">
   <h3 class="section-title">OFERTAS</h3>
 
-  <!-- Barra de búsqueda -->
+  <!-- Barra de búsqueda RESPONSIVE -->
   <div class="search-bar d-flex justify-content-start mb-4">
-    <div class="input-group" style="width: 25%">
+    <div class="input-group w-100 w-md-50 w-lg-25">
       <span class="input-group-text" style="background-color: #fff; border-right: 0">
         <i class="fas fa-search"></i>
       </span>

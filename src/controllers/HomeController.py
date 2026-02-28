@@ -28,7 +28,7 @@ def mapa():
     print(f"DEBUG - Sesión completa: {dict(session)}")
     
     data_json = json.dumps(data)
-    return render_template('screens/Mapa/mapa.html', 
+    return render_template('screens/Mapa/Mapa.html', 
                          locations=data_json, 
                          google_maps_api_key=api_key,
                          user_role=user_role)

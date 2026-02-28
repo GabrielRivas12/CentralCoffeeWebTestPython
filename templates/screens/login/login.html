@@ -1,4 +1,5 @@
-{% extends "base/BaseAdmin.html" %} {% block body %}
+{% extends "base/BaseAdmin.html" %}
+{% block body %}
 <div class="container login-container my-5">
   <div class="row justify-content-center w-100">
     <div class="col-12 col-md-8 mx-auto">
@@ -7,7 +8,8 @@
           <!-- Panel izquierdo con logo y mensaje -->
           <div class="col-md-6 login-left d-flex flex-column justify-content-center align-items-center text-white p-4">
             <div class="logo-container mb-3">
-              <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="img-fluid" style="max-width: 150px" />
+              <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="img-fluid"
+                style="max-width: 150px" />
             </div>
             <h1 class="welcome-text">¡Bienvenido!</h1>
             <p class="tagline">Donde comienza tu historia con el café</p>
@@ -36,7 +38,7 @@
             </div>
             {% endif %}
 
-            <form action="{{ url_for('login.login') }}" method="POST">
+            <form action="{{ url_for('login.login') }}" method="POST" id="loginForm">
               <div class="brand mb-4" style="
                   font-size: 32px;
                   font-weight: bold;
@@ -59,7 +61,8 @@
 
               <div class="mb-3 text-end">
                 <div class="mb-3 d-flex justify-content-end">
-                  <button type="button" class="btn btn-olvidado">
+                  <button type="button" class="btn btn-olvidado" data-bs-toggle="modal"
+                    data-bs-target="#passwordResetModal">
                     ¿Olvidaste tu contraseña?
                   </button>
                 </div>
@@ -69,7 +72,7 @@
                 ¿No tienes cuenta? <span class="resaltar">Registrate</span>
               </a>
 
-              <button type="submit" class="btn btn-login w-100 mb-3">
+              <button type="submit" class="btn btn-login w-100 mb-3" id="submitBtn">
                 Iniciar sesión
               </button>
             </form>
@@ -78,6 +81,36 @@
             {% endif %}
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para recuperación de contraseña -->
+<div class="modal fade" id="passwordResetModal" tabindex="-1" aria-labelledby="passwordResetModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="passwordResetModalLabel">Recuperar Contraseña</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Ingresa tu correo electrónico para enviarte un enlace de recuperación.</p>
+        <form id="resetPasswordForm">
+          <div class="mb-3">
+            <label for="resetEmail" class="form-label">Correo Electrónico</label>
+            <input type="email" class="form-control" id="resetEmail" name="email" placeholder="usuario@correo.com"
+              required>
+            <div class="invalid-feedback" id="emailError"></div>
+          </div>
+          <div class="alert alert-success d-none" id="successMessage"></div>
+          <div class="alert alert-danger d-none" id="errorMessage"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-login" id="sendResetBtn">Enviar Enlace</button>
       </div>
     </div>
   </div>
@@ -202,10 +235,101 @@
       justify-content: center;
       min-height: calc(100vh - 120px);
     }
-    
+
     .card.login-card {
       margin: 0 auto;
     }
   }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const sendResetBtn = document.getElementById('sendResetBtn');
+  const resetEmailInput = document.getElementById('resetEmail');
+  const successMessage = document.getElementById('successMessage');
+  const errorMessage = document.getElementById('errorMessage');
+
+  sendResetBtn.addEventListener('click', async function() {
+    const email = resetEmailInput.value.trim();
+    
+    if (!email || !validateEmail(email)) {
+      showError('Por favor ingresa un correo electrónico válido');
+      return;
+    }
+
+    // Estado de carga
+    sendResetBtn.disabled = true;
+    const originalText = sendResetBtn.textContent;
+    sendResetBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Enviando...';
+    
+    // Limpiar mensajes
+    successMessage.classList.add('d-none');
+    errorMessage.classList.add('d-none');
+
+    try {
+      const response = await fetch('/login/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email })
+      });
+
+      // Obtener el texto primero
+      const responseText = await response.text();
+      
+      // Verificar si es HTML (error)
+      if (responseText.includes('<!DOCTYPE') || responseText.includes('<html>')) {
+        showError('Error del servidor. Por favor contacta al administrador.');
+        console.error('Servidor devolvió HTML:', responseText.substring(0, 300));
+        return;
+      }
+      
+      // Intentar parsear como JSON
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        showError('Respuesta inválida del servidor.');
+        console.error('Error parseando JSON:', e);
+        return;
+      }
+      
+      if (data.success) {
+        showSuccess(data.message || 'Correo enviado exitosamente.');
+        // Limpiar campo después de 3 segundos
+        setTimeout(() => {
+          resetEmailInput.value = '';
+        }, 3000);
+      } else {
+        showError(data.error || 'Error al enviar el correo.');
+      }
+      
+    } catch (error) {
+      console.error('Error de red:', error);
+      showError('Error de conexión. Verifica tu internet.');
+    } finally {
+      sendResetBtn.disabled = false;
+      sendResetBtn.textContent = originalText;
+    }
+  });
+
+  function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function showSuccess(message) {
+    successMessage.textContent = message;
+    successMessage.classList.remove('d-none');
+    errorMessage.classList.add('d-none');
+  }
+
+  function showError(message) {
+    errorMessage.textContent = message;
+    errorMessage.classList.remove('d-none');
+    successMessage.classList.add('d-none');
+  }
+});
+</script>
 {% endblock %}
