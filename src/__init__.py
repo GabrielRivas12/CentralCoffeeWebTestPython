@@ -25,12 +25,17 @@ def create_app():
 
     @app.before_request
     def check_authentication():
+
+        if request.path == '/rci':
+            return
+        
         public_routes = [
             'login.login', 
             'login.registro', 
             'login.logout',
             'static',
-            'home.home'
+            'home.home',
+            'assistant.rci'
         ]
         
         if request.endpoint in public_routes:
