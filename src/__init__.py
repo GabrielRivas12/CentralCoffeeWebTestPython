@@ -31,7 +31,8 @@ def create_app():
             'login.registro', 
             'login.logout',
             'static',
-            'home.home'
+            'home.home',
+            'assistant.rci'
         ]
         
         if request.endpoint in public_routes:
